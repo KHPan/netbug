@@ -188,7 +188,6 @@ class Out:
 	def __str__(self):
 		return "爬蟲結束"
 
-
 class Error:
 	def __str__(self):
 		return "出現錯誤"
@@ -302,14 +301,6 @@ class Novel:
 		elif spt[2] == "id":
 			return FA(self.div.find_all(spt[1], id=spt[3]))
 	
-	'''def find_str(self, spt,
-		func = (lambda spt, txt: txt == spt[3])):
-		for ele in self.div.find_all(spt[1]):
-			if func(spt, ele.getText()):
-				return ele
-		return None'''
-		
-	
 	def runLine(self, code_line):	#跑單行程式
 		if is_show_steps:
 			print(self.div)
@@ -373,19 +364,12 @@ class Novel:
 				else:
 					if len(spt) >= 3 and spt[2] == "string":
 						if len(spt) == 4:
-							#self.div = self.find_str(spt)
 							self.div = self.find(spt[1],
 								string = spt[3])
 						elif spt[4] == "exist":
-							#self.div = self.find_str(spt,
-							#	(lambda spt, txt:
-							#	txt.find(spt[3]) != -1))
 							self.div = self.find(spt[1],
 								string = re.compile(spt[3]))
 						elif spt[4] == "start":
-							#self.div = self.find_str(spt,
-							#	(lambda spt, txt:
-							#	txt.find(spt[3]) == 0))
 							self.div = self.find(spt[1],
 								string = re.compile("^" + spt[3]))
 					else:

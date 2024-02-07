@@ -13,6 +13,7 @@ import traceback
 import copy
 import sys
 import os
+os.chdir(os.getcwd())
 import wcwidth
 import time
 import re
@@ -51,15 +52,17 @@ def open_file(file_name, mode, is_novel):	#開啟檔案
 			ret=open("/content/gdrive/MyDrive/小說/"
 				+file_name, mode, encoding="utf-8")
 		else:
-			ret=open("C:/Users/HANK/Downloads/"
-				+file_name, mode, encoding="utf-8")
+			try:
+				ret=open("C:/Users/HANK/Downloads/"
+					+file_name, mode, encoding="utf-8")
+			except:
+				ret=open("C:/Users/hank9/OneDrive/文件/下載的小說/"
+					+file_name, mode, encoding="utf-8")
 	else:
 		if is_colab:
-			ret=open("/content/gdrive/MyDrive/"
-				+file_name, mode, encoding="utf-8")
+			ret=open(file_name, mode, encoding="utf-8")
 		else:
-			ret=open("D:/C++6.0/"
-				+file_name, mode, encoding="utf-8")
+			ret=open(file_name, mode, encoding="utf-8")
 	return ret
 
 def printLine():		#畫一條線

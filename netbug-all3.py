@@ -298,8 +298,8 @@ class Novel:
 			return FA(self.div.find_all(spt[1]))
 		elif spt[2] == "class":
 			return FA(self.div.find_all(spt[1], class_=spt[3]))
-		elif spt[2] == "id":
-			return FA(self.div.find_all(spt[1], id=spt[3]))
+		else:
+			return FA(self.div.find_all(spt[1], **{spt[2]:spt[3]}))
 	
 	def runLine(self, code_line):	#跑單行程式
 		if is_show_steps:

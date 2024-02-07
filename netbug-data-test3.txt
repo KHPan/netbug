@@ -1,0 +1,16 @@
+www.auwxw.com
+/
+唉呦
+/
+utf-8
+/
+find style height:\s30px;\sline-height:\s30px;\stext-align:\scenter;\sborder-bottom-color:\s#cccccc;\sborder-bottom-style:\ssolid;\sborder-bottom-width:\s1px;\sfont-size:\s20px;\sfont-weight:\sbold;\scolor: #ff0000;
+/
+
+/
+
+/
+
+/
+
+/

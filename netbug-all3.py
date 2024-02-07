@@ -1,5 +1,11 @@
 #python D:/C++6.0/netbug-all3.py
 #all
+try:
+  from google.colab import drive
+  drive.mount('/content/gdrive')
+  is_colab = True
+except:
+  is_colab = False
 from bs4 import BeautifulSoup
 import requests
 from opencc import OpenCC
@@ -18,7 +24,7 @@ cc=OpenCC("s2tw")
 def askYN(prt="滿意嗎？"):			#問是否問題
 	while True:
 		print(prt+"(y/n)", end="")
-		inp=input();
+		inp=input()
 		if inp=="y" or inp=="Y" or inp=="ｙ" or inp=="Ｙ":
 			return True
 		elif inp=="n" or inp=="N" or inp=="ｎ" or inp=="Ｎ":

@@ -192,19 +192,6 @@ class Error:
 	def __str__(self):
 		return "出現錯誤"
 
-class FA(list):
-	def __init__(self, inp):
-		if inp == []:
-			super().__init__([None])
-		else:
-			super().__init__(inp)
-	
-	def __getitem__(self, index):
-		if self == [None] or index >= len(self):
-			return None
-		else:
-			return super().__getitem__(index)
-
 text_tag = ("p", "h1", "h2", "h3", "b")
 
 class Novel:
@@ -293,13 +280,29 @@ class Novel:
 				if askYN():
 					return True
 	
-	def find_all(self, spt):
+	def find(self, spt, *, is_list):
 		if len(spt) < 4:
-			return FA(self.div.find_all(spt[1]))
-		elif spt[2] == "class":
-			return FA(self.div.find_all(spt[1], class_=spt[3]))
+			attrs = {}
 		else:
-			return FA(self.div.find_all(spt[1], **{spt[2]:spt[3]}))
+			attr_name = "class_" if spt[2] == "class" else spt[2]
+			if len(spt) == 4:
+				target = spt[3]
+			elif spt[4] == "exist":
+				target = re.compile(spt[3])
+			elif spt[4] == "start":
+				target = re.compile("^" + spt[3])
+			else:
+				target = spt[3]
+			attrs = {attr_name : target}
+		if is_list:
+			ret = self.div.find_all(spt[1], **attrs)
+			return ret if ret else []
+		else:
+			if len(spt)%2 == 0 or spt[-1] in ("exist", "start"):
+				return self.div.find(spt[1], **attrs)
+			else:
+				lst = self.div.find_all(spt[1], **attrs)
+				return lst[int(spt[-1])] if int(spt[-1]) < len(lst) else None
 	
 	def runLine(self, code_line):	#跑單行程式
 		if is_show_steps:
@@ -312,7 +315,7 @@ class Novel:
 			if spt[0] == "text":
 				self.div = copy.copy(self.div)
 				if len(spt) > 1:
-					for div in self.find_all(spt):
+					for div in self.find(spt, is_list = True):
 						for ele in div.find_all(recursive=False):
 							if ele.name == "br":
 								ele.replace_with("\n")
@@ -356,26 +359,13 @@ class Novel:
 			elif spt[0] == "extract":
 				self.div = copy.copy(self.div)
 				[ele.extract() for ele in
-					self.find_all(spt)]
+					self.find(spt, is_list = True)]
 			
 			elif spt[0] == "find":
 				if isinstance(self.div, str):
 					self.div = self.div.find(spt[1])
 				else:
-					if len(spt) >= 3 and spt[2] == "string":
-						if len(spt) == 4:
-							self.div = self.find(spt[1],
-								string = spt[3])
-						elif spt[4] == "exist":
-							self.div = self.find(spt[1],
-								string = re.compile(spt[3]))
-						elif spt[4] == "start":
-							self.div = self.find(spt[1],
-								string = re.compile("^" + spt[3]))
-					else:
-						self.div = self.find_all(spt)[0
-							if len(spt) == 2 or len(spt) == 4
-							else int(spt[-1])]
+					self.div = self.find(spt, is_list = False)
 			
 			elif spt[0] == "out":
 				if spt[1] == "exist":
@@ -544,7 +534,7 @@ class Novel:
 			elif inp.find("show ") == 0:
 				try:
 					spt = inp.split(" ")
-					fa = self.find_all(spt)
+					fa = self.find(spt, is_list = True)
 					for index, content in sorted(enumerate(fa),
 						key = lambda obj: len(str(obj[1]))):
 						printLine()

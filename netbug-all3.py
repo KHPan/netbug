@@ -347,6 +347,11 @@ class Novel:
 						self.div = ""
 					else:
 						self.div = self.div[start:(end+1)]
+			
+			elif spt[0] == "unwrap":
+				self.div = copy.copy(self.div)
+				for ele in self.find(spt, is_list = True):
+					ele.unwrap()
 				
 			elif spt[0] == "trans":
 				self.setAddressAndEncoding(

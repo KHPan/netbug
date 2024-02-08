@@ -1,16 +1,24 @@
-www.auwxw.com
+houhuayuan.vip
 /
-唉呦
+薔薇後花園
 /
-utf-8
+UTF-8
 /
-find style height:\s30px;\sline-height:\s30px;\stext-align:\scenter;\sborder-bottom-color:\s#cccccc;\sborder-bottom-style:\ssolid;\sborder-bottom-width:\s1px;\sfont-size:\s20px;\sfont-weight:\sbold;\scolor: #ff0000;
+find h1
+text
+split \s第 0
 /
-
+nothing
 /
-
+nothing
 /
-
+find div class entry-content
+text
 /
-
+nothing
 /
+find span class series-nav-right
+find a
+out not exist
+get href
+trans

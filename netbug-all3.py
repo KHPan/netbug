@@ -323,39 +323,28 @@ class Novel:
 				for ele in code_line.split(" ")]
 			if spt[0] == "text":
 				self.div = copy.copy(self.div)
-				if len(spt) > 1:
-					for div in self.find(spt[1:], is_list = True):
-						for ele in div.find_all(recursive=False):
-							if ele.name == "br":
-								ele.replace_with("\n")
-							elif ele.name in Novel.text_tag:
-								ele.replace_with(ele.getText()+"\n")
-							else:
-								ele.extract()
-						div.replace_with(div.getText())
-				else:
-					for ele in self.div.find_all(recursive=False):
-						if ele.name == "br":
-							ele.replace_with("\n")
-						elif ele.name in Novel.text_tag:
-							ele.replace_with(ele.getText()+"\n")
-						else:
-							ele.extract()
-					self.div = cc.convert(self.div.getText())
-					start = 0
-					while start<len(self.div):
-						if not isSpace(self.div[start]):
-							break
-						start = start + 1
-					end = len(self.div) - 1
-					while end>start:
-						if not isSpace(self.div[end]):
-							break
-						end = end - 1
-					if start >= end:
-						self.div = ""
+				for ele in self.div.find_all(recursive=False):
+					if ele.name == "br":
+						ele.replace_with("\n")
+					elif ele.name in Novel.text_tag:
+						ele.replace_with(ele.getText()+"\n")
 					else:
-						self.div = self.div[start:(end+1)]
+						ele.extract()
+				self.div = cc.convert(self.div.getText())
+				start = 0
+				while start<len(self.div):
+					if not isSpace(self.div[start]):
+						break
+					start = start + 1
+				end = len(self.div) - 1
+				while end>start:
+					if not isSpace(self.div[end]):
+						break
+					end = end - 1
+				if start >= end:
+					self.div = ""
+				else:
+					self.div = self.div[start:(end+1)]
 			
 			elif spt[0] == "unwrap":
 				self.div = copy.copy(self.div)

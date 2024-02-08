@@ -454,6 +454,8 @@ class Novel:
 		code_all = getattr(self.site_data, code_name, None)
 		if code_all != "":
 			old_addr = self.address
+			if self.is_test:
+				self.setCopy()
 			for code_line in code_all.split("\n"):
 				self.runLine(code_line)
 				if isinstance(self.div, Out):
@@ -474,7 +476,7 @@ class Novel:
 				if askYN(fname[code_name]+"滿意嗎？"):
 					return self.div
 				else:
-					self.codeStart()
+					self.fromCopy()
 			else:
 				return self.div
 		

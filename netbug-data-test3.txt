@@ -1,24 +1,35 @@
-houhuayuan.vip
+www.uukanshu.net
 /
-薔薇後花園
+UU
 /
-UTF-8
+gb2312
 /
-find h1
+find head
+find title
 text
-split \s第 0
+split 最新章 0
 /
-nothing
-/
-nothing
-/
-find div class entry-content
+find dd class jieshao_content
+find h3
 text
 /
-nothing
+find ul id chapterList
+find a -1
+get href
+trans
 /
-find span class series-nav-right
-find a
+find div id contentbox
+text
+/
+find div class h1title
+find h1 id timu
+text
+/
+find a id next
+text
+find 下一章
 out not exist
+back
+find a id next
 get href
 trans

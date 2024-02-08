@@ -281,6 +281,14 @@ class Novel:
 					return True
 	
 	def find(self, spt, *, is_list):
+		tag_name = spt[1]
+		cmd = spt[2:]
+		if len(cmd) < 2:
+			attrs = {}
+		else:
+			attr_name = "class_" if cmd[0] == "class" else cmd[0]
+		
+		
 		if len(spt) < 4:
 			attrs = {}
 		else:

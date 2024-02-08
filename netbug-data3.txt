@@ -13,8 +13,8 @@ find dd class jieshao_content
 find h3
 text
 /
-find ul id chapterList
-find a -1
+find div class zhangjie\sclear
+find a
 get href
 trans
 /
@@ -26,12 +26,8 @@ find h1 id timu
 text
 /
 find a id next
-text
-find 下一章
-out not exist
-back
-find a id next
 get href
+out not exist .html
 trans
 --網站分隔線--
 www.69shuba.com

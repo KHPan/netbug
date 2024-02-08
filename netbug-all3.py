@@ -280,44 +280,38 @@ class Novel:
 				if askYN():
 					return True
 	
-	def find(self, spt, *, is_list):
-		tag_name = spt[1]
-		cmd = spt[2:]
-		if len(cmd) < 2:
+	special_cmd = ("exist", "start")
+	def find(self, cmd, *, is_list):
+		tag_name = cmd[0]
+		cmd = cmd[1:]
+		if len(cmd) < 2 or cmd[0] in Novel.special_cmd:
 			attrs = {}
 		else:
 			attr_name = "class_" if cmd[0] == "class" else cmd[0]
-		
-		
-		if len(spt) < 4:
-			attrs = {}
-		else:
-			attr_name = "class_" if spt[2] == "class" else spt[2]
-			if len(spt) == 4:
-				target = spt[3]
-			elif spt[4] == "exist":
-				target = re.compile(spt[3])
-			elif spt[4] == "start":
-				target = re.compile("^" + spt[3])
+			if len(cmd) > 2 and cmd[2] == "exist":
+				target = re.compile(cmd[1])
+				cmd = cmd[3:]
+			elif len(cmd) > 2 and cmd[2] == "start":
+				target = re.compile("^" + cmd[1])
+				cmd = cmd[3:]
 			else:
-				target = spt[3]
+				target = cmd[1]
+				cmd = cmd[2:]
 			attrs = {attr_name : target}
-		if is_list:
-			ret = self.div.find_all(spt[1], **attrs)
-			if ret is None:
-				ret = []
-			if len(spt)%2 != 0 and spt[-1] not in ("exist", "start"):
-				if int(spt[-1]) < len(ret):
-					ret = [ret[int(spt[-1])]]
-				else:
-					ret = []
-			return ret
-		else:
-			if len(spt)%2 == 0 or spt[-1] in ("exist", "start"):
-				return self.div.find(spt[1], **attrs)
+		
+		if len(cmd) == 0:
+			if is_list:
+				ret = self.div.find_all(tag_name, **attrs)
+				return ret if ret else []
 			else:
-				lst = self.div.find_all(spt[1], **attrs)
-				return lst[int(spt[-1])] if int(spt[-1]) < len(lst) else None
+				return self.div.find(tag_name, **attrs)
+		else:
+			lst = self.div.find_all(tag_name, **attrs)
+			index = int(cmd[0])
+			if lst is None or index >= len(lst):
+				return [] if is_list else None
+			else:
+				return [lst[index]] if is_list else lst[index]
 	
 	def runLine(self, code_line):	#跑單行程式
 		if is_show_steps:
@@ -330,7 +324,7 @@ class Novel:
 			if spt[0] == "text":
 				self.div = copy.copy(self.div)
 				if len(spt) > 1:
-					for div in self.find(spt, is_list = True):
+					for div in self.find(spt[1:], is_list = True):
 						for ele in div.find_all(recursive=False):
 							if ele.name == "br":
 								ele.replace_with("\n")
@@ -365,7 +359,7 @@ class Novel:
 			
 			elif spt[0] == "unwrap":
 				self.div = copy.copy(self.div)
-				for ele in self.find(spt, is_list = True):
+				for ele in self.find(spt[1:], is_list = True):
 					ele.unwrap()
 				
 			elif spt[0] == "trans":
@@ -379,13 +373,13 @@ class Novel:
 			elif spt[0] == "extract":
 				self.div = copy.copy(self.div)
 				[ele.extract() for ele in
-					self.find(spt, is_list = True)]
+					self.find(spt[1:], is_list = True)]
 			
 			elif spt[0] == "find":
 				if isinstance(self.div, str):
 					self.div = self.div.find(spt[1])
 				else:
-					self.div = self.find(spt, is_list = False)
+					self.div = self.find(spt[1:], is_list = False)
 			
 			elif spt[0] == "out":
 				if spt[1] == "exist":
@@ -554,7 +548,7 @@ class Novel:
 			elif inp.find("show ") == 0:
 				try:
 					spt = inp.split(" ")
-					fa = self.find(spt, is_list = True)
+					fa = self.find(spt[1:], is_list = True)
 					for index, content in sorted(enumerate(fa),
 						key = lambda obj: len(str(obj[1]))):
 						printLine()

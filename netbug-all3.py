@@ -361,6 +361,10 @@ class Novel:
 				self.div = copy.copy(self.div)
 				for ele in self.find(spt[1:], is_list = True):
 					ele.unwrap()
+			
+			elif spt[0] == "select":
+				self.div = self.div.select_one(
+					code_line[code_line.index(" ")+1:])
 				
 			elif spt[0] == "trans":
 				self.setAddressAndEncoding(

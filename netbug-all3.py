@@ -457,6 +457,9 @@ class Novel:
 			if self.is_test:
 				self.setCopy()
 			for code_line in code_all.split("\n"):
+				if err_cnt == 2:
+					print(self.div)
+					print("CODE：" + code_line)
 				self.runLine(code_line)
 				if isinstance(self.div, Out):
 					break

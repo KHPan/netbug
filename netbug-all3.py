@@ -387,11 +387,19 @@ class Novel:
 			
 			elif spt[0] == "out":
 				if spt[1] == "exist":
-					if self.div != -1 and not self.div is None:
-						self.div = Out()
+					if len(spt) == 2:
+						if self.div != -1 and not self.div is None:
+							self.div = Out()
+					else:
+						if self.div.find(spt[-1]) != -1:
+							self.div = Out()
 				elif spt[1] == "not" and spt[2] == "exist":
-					if self.div == -1 or self.div is None:
-						self.div = Out()
+					if len(spt) == 3:
+						if self.div == -1 or self.div is None:
+							self.div = Out()
+					else:
+						if self.div.find(spt[-1]) == -1:
+							self.div = Out()
 			
 			elif spt[0] == "back":
 				if len(spt) == 0:

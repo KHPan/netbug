@@ -30,47 +30,6 @@ get href
 out not exist .html
 trans
 --網站分隔線--
-www.69shuba.com
-/
-69
-/
-gbk
-/
-find div class booknav2
-find h1
-find a
-text
-/
-find div class tabsnav
-find div class navtxt
-text
-/
-find div class addbtn
-find a
-get href
-trans
-find div id catalog
-find li
-find a
-get href
-trans
-/
-find div class txtnav
-text
-/
-find title
-text
-split - 1
-/
-find div class page1
-find a 3
-get href
-tag
-find .htm
-out exist
-back tag
-trans
---網站分隔線--
 tw.uukanshu.net
 /
 UUtw

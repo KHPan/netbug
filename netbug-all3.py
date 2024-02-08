@@ -380,14 +380,14 @@ class Novel:
 						if self.div != -1 and not self.div is None:
 							self.div = Out()
 					else:
-						if self.div.find(spt[-1]) != -1:
+						if str(self.div).find(spt[-1]) != -1:
 							self.div = Out()
 				elif spt[1] == "not" and spt[2] == "exist":
 					if len(spt) == 3:
 						if self.div == -1 or self.div is None:
 							self.div = Out()
 					else:
-						if self.div.find(spt[-1]) == -1:
+						if str(self.div).find(spt[-1]) == -1:
 							self.div = Out()
 			
 			elif spt[0] == "back":

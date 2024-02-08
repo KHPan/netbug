@@ -313,3 +313,71 @@ find .html
 out not exist
 back tag
 trans
+--網站分隔線--
+www.sweetastes.com
+/
+碎片故事館
+/
+utf-8
+/
+find b class name
+text
+/
+find div class overdesc
+text
+/
+find ul class chapterlist
+find a
+get href
+trans
+/
+find div class novelcontent
+text
+/
+find div class novelread
+find h2
+text
+/
+find div class nextbox
+find a
+tag
+text
+out not exist 下一
+back tag
+get onclick
+split JumpUrl(' 1
+split ') 0
+trans
+--網站分隔線--
+m.xszj.org
+/
+小說之家
+/
+utf-8
+/
+find div id info
+find h1
+text
+/
+find div id intro
+text
+/
+find div class readbtn
+find a
+get href
+trans
+/
+find div id booktxt
+text
+/
+find h1 class bookname
+text
+/
+find div class bottem1
+find a -1
+tag
+text
+out exist 沒有
+back tag
+get href
+trans

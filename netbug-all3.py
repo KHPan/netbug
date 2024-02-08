@@ -192,8 +192,6 @@ class Error:
 	def __str__(self):
 		return "出現錯誤"
 
-text_tag = ("p", "h1", "h2", "h3", "b")
-
 class Novel:
 	def __init__(self, site_data, is_test):
 		self.site_data = site_data
@@ -313,6 +311,8 @@ class Novel:
 			else:
 				return [lst[index]] if is_list else lst[index]
 	
+
+	text_tag = ("p", "h1", "h2", "h3", "b")
 	def runLine(self, code_line):	#跑單行程式
 		if is_show_steps:
 			print(self.div)
@@ -328,7 +328,7 @@ class Novel:
 						for ele in div.find_all(recursive=False):
 							if ele.name == "br":
 								ele.replace_with("\n")
-							elif ele.name in text_tag:
+							elif ele.name in Novel.text_tag:
 								ele.replace_with(ele.getText()+"\n")
 							else:
 								ele.extract()
@@ -337,7 +337,7 @@ class Novel:
 					for ele in self.div.find_all(recursive=False):
 						if ele.name == "br":
 							ele.replace_with("\n")
-						elif ele.name in text_tag:
+						elif ele.name in Novel.text_tag:
 							ele.replace_with(ele.getText()+"\n")
 						else:
 							ele.extract()

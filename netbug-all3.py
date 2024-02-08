@@ -469,6 +469,7 @@ class Novel:
 						self.runCode(code_name, err_cnt+1)
 					else:
 						print("網址：" + self.address)
+						print("CODE_NAME：" + code_name)
 						print("已三次重新載入仍舊錯誤!!!!!")
 					break
 			if self.is_test:

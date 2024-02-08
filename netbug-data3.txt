@@ -59,12 +59,8 @@ text
 /
 find div class fanye_cen
 find a -1
-tag
-text
-find 下一章
-out not exist
-back tag
 get href
+out not exist .html
 trans
 --網站分隔線--
 ixdzs8.tw

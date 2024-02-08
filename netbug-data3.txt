@@ -245,7 +245,6 @@ text
 find div class warp\smy-5\sfoot-nav
 find a 2
 get href
-tag
 trans
 find body id read
 out not exist

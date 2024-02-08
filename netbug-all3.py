@@ -1,4 +1,3 @@
-#python D:/C++6.0/netbug-all3.py
 #all
 try:
   from google.colab import drive
@@ -13,7 +12,10 @@ import traceback
 import copy
 import sys
 import os
-os.chdir(os.getcwd())
+try:
+	os.chdir(os.path.dirname(os.path.abspath(__file__)))
+except:
+	os.chdir(os.getcwd())
 import wcwidth
 import time
 import re

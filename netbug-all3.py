@@ -391,7 +391,7 @@ class Novel:
 							self.div = Out()
 			
 			elif spt[0] == "back":
-				if len(spt) == 0:
+				if len(spt) == 1:
 					self.div = self.bs
 				elif spt[1] == "tag":
 					self.div = self.tag

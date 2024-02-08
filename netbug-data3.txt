@@ -90,10 +90,7 @@ text
 /
 find div class read-next\sburl
 get data-url
-tag
-find end
-out exist
-back tag
+out exist end
 trans
 --網站分隔線--
 tw.hjwzw.com

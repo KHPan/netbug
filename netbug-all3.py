@@ -296,7 +296,14 @@ class Novel:
 			attrs = {attr_name : target}
 		if is_list:
 			ret = self.div.find_all(spt[1], **attrs)
-			return ret if ret else []
+			if ret is None:
+				ret = []
+			if len(spt)%2 != 0 and spt[-1] not in ("exist", "start"):
+				if int(spt[-1]) < len(ret):
+					ret = [ret[int(spt[-1])]]
+				else:
+					ret = []
+			return ret
 		else:
 			if len(spt)%2 == 0 or spt[-1] in ("exist", "start"):
 				return self.div.find(spt[1], **attrs)

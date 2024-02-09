@@ -18,6 +18,8 @@ except:
 	os.chdir(os.getcwd())
 import wcwidth
 import time
+import random
+random.seed(time.time())
 import re
 
 is_colab=False
@@ -668,6 +670,7 @@ while True:
 		cnt=0
 		while len(require_list) > 0:
 			for require in require_list[:]:
+				time.sleep(random.uniform(1, 5))
 				if cnt == 0:
 					preread = require.novel.runCode("fpreread")
 					print(require.file_name + "：前言")

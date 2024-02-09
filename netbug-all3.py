@@ -568,10 +568,10 @@ class Novel:
 					fa = self.find(spt[1:], is_list = True)
 					for index, content in sorted(enumerate(fa),
 						key = lambda obj: len(str(obj[1]))):
-						printLine()
-						print("index:" + str(index))
+						print(f"index:{index}")
 						print(content)
-						print("index:" + str(index))
+						print(f"index:{index}")
+						printLine()
 				except:
 					traceback.print_exc()
 			

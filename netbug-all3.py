@@ -471,7 +471,10 @@ class Novel:
 				if isinstance(self.div, Out):
 					break
 				elif isinstance(self.div, Error):
-					self.setAddressAndEncoding(old_addr)
+					while not self.setAddressAndEncoding(old_addr):
+						print(f"網址{old_addr}跳轉失敗，之前明明成功了，真奇怪，10-100秒後重試")
+						time.sleep(random.uniform(10, 100))
+						print("10-100秒結束")
 					if err_cnt<2:
 						print("出錯!!五秒後重新載入")
 						time.sleep(5)

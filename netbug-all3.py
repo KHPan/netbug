@@ -694,6 +694,7 @@ while True:
 					if isinstance(require.novel.runCode("fnext"),
 						Out):
 						require_list.remove(require)
+						del require
 			cnt = cnt + 1
 			if is_test and cnt == 2:
 				if not require_list[0].novel.site_data in site_list:

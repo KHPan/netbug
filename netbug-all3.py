@@ -317,7 +317,7 @@ class Novel:
 				return [lst[index]] if is_list else lst[index]
 	
 
-	text_tag = ("p", "h1", "h2", "h3", "b", "em")
+	text_tag = ("p", "h1", "h2", "h3", "b", "em", "span")
 	def runLine(self, code_line):	#跑單行程式
 		if is_show_steps:
 			print(self.div)

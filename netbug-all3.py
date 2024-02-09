@@ -363,8 +363,8 @@ class Novel:
 			elif spt[0] == "trans":
 				if len(spt) > 1:
 					time.sleep(random.uniform(int(spt[1]), int(spt[2])))
-				self.setAddressAndEncoding(
-					self.addressBeautify(self.div))
+				assert self.setAddressAndEncoding(
+					self.addressBeautify(self.div)), f"網址{self.div}跳轉失敗"
 				self.div = self.bs
 			
 			elif spt[0] == "get":

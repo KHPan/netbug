@@ -217,9 +217,10 @@ class Novel:
 				+"/"+address)
 	
 	#設定BS順便搞Encoding
+	headers = {"User-Agent" : "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36"}
 	def setAddressAndEncoding(self, address):
 		try:
-			req = requests.get(address)
+			req = requests.get(address, headers = Novel.headers)
 		except:
 			print("讀取網址失敗")
 			return False

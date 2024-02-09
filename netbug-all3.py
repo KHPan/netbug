@@ -360,6 +360,8 @@ class Novel:
 					code_line[code_line.index(" ")+1:])
 				
 			elif spt[0] == "trans":
+				if len(spt) > 1:
+					time.sleep(random.uniform(int(spt[1]), int(spt[2])))
 				self.setAddressAndEncoding(
 					self.addressBeautify(self.div))
 				self.div = self.bs
@@ -670,7 +672,6 @@ while True:
 		cnt=0
 		while len(require_list) > 0:
 			for require in require_list[:]:
-				time.sleep(random.uniform(1, 5))
 				if cnt == 0:
 					preread = require.novel.runCode("fpreread")
 					print(require.file_name + "：前言")

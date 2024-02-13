@@ -162,6 +162,9 @@ class CommandHandler:
 			return self.spt[self.index + index]
 		except:
 			return None
+	
+	def __str__(self):
+		return " ".join(self.spt)
 
 
 class SiteData:
@@ -364,9 +367,11 @@ class Novel:
 			print(code_line)
 			printLine()
 		try:
-			spt = [ele.replace("\\s", " ").replace("\\n", "\n")
-				for ele in code_line.split(" ")]
-			if spt[0] == "text":
+			if isinstance(code_line, CommandHandler):
+				cmd = code_line
+			else:
+				cmd = CommandHandler(code_line)
+			if cmd.isWord("text"):
 				self.div = copy.copy(self.div)
 				for ele in self.div.find_all(recursive=False):
 					if ele.name == "br":
@@ -391,14 +396,13 @@ class Novel:
 				else:
 					self.div = self.div[start:(end+1)]
 			
-			elif spt[0] == "unwrap":
+			elif cmd.isWord("unwrap"):
 				self.div = copy.copy(self.div)
-				for ele in self.find(spt[1:], is_list = True):
+				for ele in self.find(cmd, is_list = True):
 					ele.unwrap()
 			
-			elif spt[0] == "select":
-				self.div = self.div.select_one(
-					code_line[code_line.index(" ")+1:])
+			elif cmd.isWord("select"):
+				self.div = self.div.select_one(cmd.remain())
 				
 			elif spt[0] == "trans":
 				if len(spt) > 1:

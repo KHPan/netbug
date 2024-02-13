@@ -404,65 +404,71 @@ class Novel:
 			elif cmd.isWord("select"):
 				self.div = self.div.select_one(cmd.remain())
 				
-			elif spt[0] == "trans":
-				if len(spt) > 1:
-					time.sleep(random.uniform(int(spt[1]), int(spt[2])))
+			elif cmd.isWord("trans"):
+				i1 = cmd.popInt()
+				i2 = cmd.popInt()
+				if i1 is not None:
+					if i2 is not None:
+						time.sleep(random.uniform(i1, i2))
+					else:
+						time.sleep(i1)
 				assert self.setAddressAndEncoding(
 					self.addressBeautify(self.div)), f"網址{self.div}跳轉失敗"
 				self.div = self.bs
 			
-			elif spt[0] == "get":
-				self.div = self.div.get(spt[1])
+			elif cmd.isWord("get"):
+				self.div = self.div.get(cmd.pop())
 			
-			elif spt[0] == "extract":
+			elif cmd.isWord("extract"):
 				self.div = copy.copy(self.div)
-				[ele.extract() for ele in
-					self.find(spt[1:], is_list = True)]
+				for ele in self.find(cmd, is_list = True):
+					ele.extract()
 			
-			elif spt[0] == "find":
+			elif cmd.isWord("find"):
 				if isinstance(self.div, str):
-					self.div = self.div.find(spt[1])
+					self.div = self.div.find(cmd.pop())
 				else:
-					self.div = self.find(spt[1:], is_list = False)
+					self.div = self.find(cmd, is_list = False)
 			
-			elif spt[0] == "out":
-				if spt[1] == "exist":
-					if len(spt) == 2:
+			elif cmd.isWord("out"):
+				if cmd.isWord("exist"):
+					if cmd.isEmpty():
 						if self.div != -1 and not self.div is None:
 							self.div = Out()
 					else:
-						if str(self.div).find(spt[-1]) != -1:
+						if str(self.div).find(cmd.pop()) != -1:
 							self.div = Out()
-				elif spt[1] == "not" and spt[2] == "exist":
-					if len(spt) == 3:
+				elif cmd.isWord("not") and cmd.isWord("exist"):
+					if cmd.isEmpty():
 						if self.div == -1 or self.div is None:
 							self.div = Out()
 					else:
-						if str(self.div).find(spt[-1]) == -1:
+						if str(self.div).find(cmd.pop()) == -1:
 							self.div = Out()
 			
-			elif spt[0] == "back":
-				if len(spt) == 1:
+			elif cmd.isWord("back"):
+				if cmd.isEmpty():
 					self.div = self.bs
-				elif spt[1] == "tag":
+				elif cmd.isWord("tag"):
 					self.div = self.tag
 			
-			elif spt[0] == "nothing":
+			elif cmd.isWord("nothing"):
 				self.div = ""
 			
-			elif spt[0] == "split":
-				self.div = self.div.split(spt[1])[int(spt[2])]
+			elif cmd.isWord("split"):
+				self.div = self.div.split(cmd.pop())[cmd.popInt()]
 			
-			elif spt[0] == "tag":
+			elif cmd.isWord("tag"):
 				self.tag = self.div
 			
-			else:
-				print("CODE_ERROR:"+code_line)
-				print("指令不存在")
+			if not cmd.isEmpty()
+				print(f"CODE_ERROR:{code_line}")
+				print("指令不存在或有多餘字符")
+				print(f"remain:{cmd.remain()}")
 				self.div = Error()
 				return False
 		except:
-			print("CODE_ERROR:"+code_line)
+			print(f"CODE_ERROR:{code_line}")
 			traceback.print_exc()
 			self.div = Error()
 			return False

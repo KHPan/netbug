@@ -152,6 +152,15 @@ class CommandHandler:
 		ret = " ".join(self.spt[self.index:])
 		self.index = len(self.spt)
 		return ret
+	
+	def __len__(self):
+		return len(self.spt) - self.index
+	
+	def __getitem__(self, index):
+		try:
+			return self.spt[self.index + index]
+		except:
+			return None
 
 
 class SiteData:
@@ -319,24 +328,21 @@ class Novel:
 	
 	special_cmd = ("exist", "start")
 	def find(self, cmd, *, is_list):
-		tag_name = cmd[0]
-		cmd = cmd[1:]
+		tag_name = cmd.pop()
 		if len(cmd) < 2 or cmd[0] in Novel.special_cmd:
 			attrs = {}
 		else:
-			attr_name = "class_" if cmd[0] == "class" else cmd[0]
-			if len(cmd) > 2 and cmd[2] == "exist":
-				target = re.compile(cmd[1])
-				cmd = cmd[3:]
-			elif len(cmd) > 2 and cmd[2] == "start":
-				target = re.compile("^" + cmd[1])
-				cmd = cmd[3:]
-			else:
-				target = cmd[1]
-				cmd = cmd[2:]
+			attr_name = cmd.pop()
+			if attr_name == "class":
+				attr_name = "class_"
+			target = cmd.pop()
+			if cmd.isWord("exist"):
+				target = re.compile(target)
+			elif cmd.isWord("start"):
+				target = re.compile("^" + target)
 			attrs = {attr_name : target}
 		
-		if len(cmd) == 0:
+		if cmd.isEmpty():
 			if is_list:
 				ret = self.div.find_all(tag_name, **attrs)
 				return ret if ret else []
@@ -344,7 +350,7 @@ class Novel:
 				return self.div.find(tag_name, **attrs)
 		else:
 			lst = self.div.find_all(tag_name, **attrs)
-			index = int(cmd[0])
+			index = cmd.popInt()
 			if lst is None or index >= len(lst):
 				return [] if is_list else None
 			else:

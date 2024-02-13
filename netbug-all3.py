@@ -127,8 +127,8 @@ class CommandHandler:
 		self.index = 0
 	
 	def isWord(self, word):
-		if self.index < len(self.spt)
-			and self.spt[self.index] == word:
+		if (self.index < len(self.spt)
+			and self.spt[self.index] == word):
 			self.index += 1
 			return True
 		else:
@@ -140,12 +140,14 @@ class CommandHandler:
 	def pop(self):
 		try:
 			return self.spt[self.index]
+			self.index += 1
 		except:
 			return None
 	
 	def popInt(self):
 		try:
 			return int(self.spt[self.index])
+			self.index += 1
 		except:
 			return None
 	
@@ -461,7 +463,7 @@ class Novel:
 			elif cmd.isWord("tag"):
 				self.tag = self.div
 			
-			if not cmd.isEmpty()
+			if not cmd.isEmpty():
 				print(f"CODE_ERROR:{code_line}")
 				print("指令不存在或有多餘字符")
 				print(f"remain:{cmd.remain()}")

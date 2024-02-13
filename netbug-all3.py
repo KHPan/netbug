@@ -139,15 +139,17 @@ class CommandHandler:
 	
 	def pop(self):
 		try:
-			return self.spt[self.index]
+			ret = self.spt[self.index]
 			self.index += 1
+			return ret
 		except:
 			return None
 	
 	def popInt(self):
 		try:
-			return int(self.spt[self.index])
+			ret = int(self.spt[self.index])
 			self.index += 1
+			return ret
 		except:
 			return None
 	

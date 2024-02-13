@@ -612,10 +612,11 @@ class Novel:
 					print(self.div)
 				printLine()
 			
-			elif inp.find("show ") == 0:
+			elif inp.startswith("show "):
 				try:
-					spt = inp.split(" ")
-					fa = self.find(spt[1:], is_list = True)
+					cmd = CommandHandler(inp)
+					cmd.pop()
+					fa = self.find(cmd, is_list = True)
 					for index, content in sorted(enumerate(fa),
 						key = lambda obj: len(str(obj[1]))):
 						print(f"index:{index}")

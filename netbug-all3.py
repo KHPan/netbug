@@ -127,12 +127,27 @@ class CommandHandler:
 		self.index = 0
 	
 	def isWord(self, word):
-		if (self.index < len(self.spt)
-			and self.spt[self.index] == word):
-			self.index += 1
-			return True
-		else:
+		if isinstance(word, tuple):
+			for w in word:
+				if self.isWord(w):
+					return True
 			return False
+		elif isinstance(word, list):
+			if self.index + len(word) <= len(self.spt):
+				for i in range(0, len(word)):
+					if word[i] != self.spt[self.index + i]:
+						return False
+				self.index += len(word)
+				return True
+			else:
+				return False
+		else:
+			if (self.index < len(self.spt)
+				and self.spt[self.index] == word):
+				self.index += 1
+				return True
+			else:
+				return False
 	
 	def isEmpty(self):
 		return self.index >= len(self.spt)
@@ -442,7 +457,7 @@ class Novel:
 					else:
 						if str(self.div).find(cmd.pop()) != -1:
 							self.div = Out()
-				elif cmd.isWord("not") and cmd.isWord("exist"):
+				elif cmd.isWord(["not", "exist"]):
 					if cmd.isEmpty():
 						if self.div == -1 or self.div is None:
 							self.div = Out()

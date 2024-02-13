@@ -120,6 +120,40 @@ def print2(str1, str2):		#左右print
 		print(line_str1 + separator + line_str2)
 
 
+class CommandHandler:
+	def __init__(self, txt):
+		self.spt = str(txt).split(" ")
+		self.index = 0
+	
+	def isWord(self, word):
+		if self.index < len(self.spt)
+			and self.spt[self.index] == word:
+			self.index += 1
+			return True
+		else:
+			return False
+	
+	def isEmpty(self):
+		return self.index >= len(self.spt)
+	
+	def pop(self):
+		try:
+			return self.spt[self.index]
+		except:
+			return None
+	
+	def popInt(self):
+		try:
+			return int(self.spt[self.index])
+		except:
+			return None
+	
+	def remain(self):
+		ret = " ".join(self.spt[self.index:])
+		self.index = len(self.spt)
+		return ret
+
+
 class SiteData:
 	def __init__(self, txt = None):
 		if txt == "" or txt is None:

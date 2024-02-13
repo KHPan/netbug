@@ -122,7 +122,8 @@ def print2(str1, str2):		#左右print
 
 class CommandHandler:
 	def __init__(self, txt):
-		self.spt = str(txt).split(" ")
+		self.spt = [ele.replace("\\s", " ").replace("\\n", "\n")
+				for ele in str(txt).split(" ")]
 		self.index = 0
 	
 	def isWord(self, word):
@@ -356,7 +357,6 @@ class Novel:
 			else:
 				return [lst[index]] if is_list else lst[index]
 	
-
 	text_tag = ("p", "h1", "h2", "h3", "b", "em", "span")
 	def runLine(self, code_line):	#跑單行程式
 		if is_show_steps:

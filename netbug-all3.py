@@ -764,7 +764,6 @@ while True:
 					if isinstance(require.novel.runCode("fnext"),
 						Out):
 						require_list.remove(require)
-			del require
 			cnt = cnt + 1
 			if is_test and cnt == 2:
 				if not require_list[0].novel.site_data in site_list:
@@ -772,6 +771,7 @@ while True:
 				site_list.write()
 				print("成功寫入檔案")
 				break
+		del require
 	except KeyboardInterrupt:
 		if is_test and len(require_list) > 0:
 			file = open_file("netbug-data-test3.txt", 'w', False)

@@ -128,10 +128,7 @@ class CommandHandler:
 	
 	def isWord(self, word):
 		if isinstance(word, tuple):
-			for w in word:
-				if self.isWord(w):
-					return True
-			return False
+			return any(self.isWord(w) for w in word)
 		elif isinstance(word, list):
 			if self.index + len(word) <= len(self.spt):
 				for i in range(0, len(word)):

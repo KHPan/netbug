@@ -411,3 +411,9 @@ class Run:				#跑時用
 
 	def __str__(self):
 		return str(self.div.prettify())
+
+def runWithoutTrans(bs, code):	#字面上的意思
+	run = Run(bs)
+	for line in code.splitlines():
+		run.run(line)
+	return run.div

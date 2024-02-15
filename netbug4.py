@@ -416,7 +416,9 @@ def runCode(bs, code, trans = None, is_show = False):	#直接跑
 		if is_show:
 			print(run.div)
 			print(f"CODE:{line}")
-		run.run(line)
+		run.run(line, trans = trans)
+		if isinstance(run.div, (Out, Error)):
+			break
 	if is_show:
 		print(run.div)
 	if trans is None:

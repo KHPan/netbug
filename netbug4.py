@@ -642,9 +642,16 @@ class Test:
 		self.runs = runs_copy
 		setattr(self.site, code_name, self.makeCode(Test.fname[code_name]))
 
-	def test(self):			#test主程式
-		for key in Test.fname:
-			if key == "fnext":
-				address = input("輸入最後一頁網址：")
-				self.runs.append(Run(Page(self.site, address)))
-			self.checkFunc(key)
+	def test(self, site_list):			#test主程式
+		try:
+			for key in Test.fname:
+				if key == "fnext":
+					address = input("輸入最後一頁網址：")
+					self.runs.append(Run(Page(self.site, address)))
+				self.checkFunc(key)
+			site_list.write()
+			print("成功寫入檔案")
+		except KeyboardInterrupt:
+			file = open_file("test-data.txt", 'w', False)
+			file.write(str(self.site))
+			file.close()

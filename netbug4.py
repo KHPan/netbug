@@ -98,3 +98,65 @@ def print2(strs):		#並排寫多段字串並加分隔線
 		for line in itertools.zip_longest(*iters, fillvalue = " " * ele_width):
 			print(separator.join(line))
 	print('\u2588' * rows)
+
+class CommandHandler:	#POP分析指令
+	def __init__(self, txt):
+		self.spt = [ele.replace("\\s", " ").replace("\\n", "\n")
+				for ele in str(txt).split(" ")]
+		self.index = 0
+	
+	def isWord(self, word):
+		if isinstance(word, tuple):
+			return any(self.isWord(w) for w in word)
+		elif isinstance(word, list):
+			if self.index + len(word) <= len(self.spt):
+				for i in range(0, len(word)):
+					if word[i] != self.spt[self.index + i]:
+						return False
+				self.index += len(word)
+				return True
+			else:
+				return False
+		else:
+			if (self.index < len(self.spt)
+				and self.spt[self.index] == word):
+				self.index += 1
+				return True
+			else:
+				return False
+	
+	def isEmpty(self):
+		return self.index >= len(self.spt)
+	
+	def pop(self):
+		try:
+			ret = self.spt[self.index]
+			self.index += 1
+			return ret
+		except:
+			return None
+	
+	def popInt(self):
+		try:
+			ret = int(self.spt[self.index])
+			self.index += 1
+			return ret
+		except:
+			return None
+	
+	def remain(self):
+		ret = " ".join(self.spt[self.index:])
+		self.index = len(self.spt)
+		return ret
+	
+	def __len__(self):
+		return len(self.spt) - self.index
+	
+	def __getitem__(self, index):
+		try:
+			return self.spt[self.index + index]
+		except:
+			return None
+	
+	def __str__(self):
+		return " ".join(self.spt)

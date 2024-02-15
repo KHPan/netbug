@@ -1,0 +1,463 @@
+www.uukanshu.net
+/
+UU
+/
+gb2312
+/
+find head
+find title
+text
+split 最新章 0
+/
+find dd class jieshao_content
+find h3
+text
+/
+find div class zhangjie\sclear
+find a
+get href
+trans
+/
+find div id contentbox
+text
+/
+find div class h1title
+find h1 id timu
+text
+/
+find a id next
+get href
+out not exist .html
+trans
+--網站分隔線--
+tw.uukanshu.net
+/
+UUtw
+/
+utf-8
+/
+find title
+text
+split 最新章節 0
+/
+find dd class jieshao_content
+find h3
+text
+/
+find div class zhangjie\sclear
+find ul
+find li
+find a
+get href
+trans
+/
+find div id contentbox
+text
+/
+find h1 id timu
+text
+/
+find div class fanye_cen
+find a -1
+get href
+out not exist .html
+trans
+--網站分隔線--
+ixdzs8.tw
+/
+愛下tw
+/
+utf-8
+/
+find div class n-text
+find h1
+text
+/
+find p id intro
+text
+/
+find span id readbtn
+find a
+get href
+trans
+/
+find section
+text
+/
+find article class page-content
+find h3
+text
+/
+find div class read-next\sburl
+get data-url
+out exist end
+trans
+--網站分隔線--
+tw.hjwzw.com
+/
+黃金屋
+/
+utf-8
+/
+find h1
+text
+/
+find table 8
+find table 8
+find div 2
+text
+/
+find table 8
+find table 8
+find div 3
+find a
+get href
+trans
+find div id tbchapterlist
+find a
+get href
+trans
+/
+find table 9
+find div 5
+text
+/
+find h1
+text
+/
+find a string 下一章
+out not exist
+get href
+trans
+--網站分隔線--
+houhuayuan.vip
+/
+薔薇後花園
+/
+UTF-8
+/
+find h1
+text
+split \s第 0
+/
+nothing
+/
+nothing
+/
+find div class entry-content
+text
+/
+nothing
+/
+find span class series-nav-right
+find a
+out not exist
+get href
+trans
+--網站分隔線--
+www.ttkan.co
+/
+天天
+/
+utf-8
+/
+find h1
+text
+/
+find p
+text
+/
+find div class full_chapters
+find a
+get href
+trans
+/
+find div class content
+text
+/
+find div class title
+find h1
+text
+/
+tag
+find div class novel_end
+out exist
+back tag
+find div class next_page_links
+find a
+get href
+trans
+--網站分隔線--
+czbooks.net
+/
+小說狂人
+/
+UTF-8
+/
+find title
+text
+split 《 1
+split 》 0
+/
+find div class description
+text
+/
+find ul id chapter-list
+find a
+get href
+trans
+/
+find div class content
+text
+/
+find div class name
+text
+split 》 1
+/
+find a class next-chapter
+out not exist
+get href
+trans
+--網站分隔線--
+www.novel543.com
+/
+稷下
+/
+UTF-8
+/
+find h1 class title
+text
+/
+find div class intro\sis-hidden-mobile
+text
+/
+find a class button\sis-primary
+get href
+trans
+/
+find div class content\spy-5
+text
+/
+find div class chapter-content\spx-3
+find h1
+text
+/
+find div class warp\smy-5\sfoot-nav
+find a 2
+get href
+trans
+find body id read
+out not exist
+--網站分隔線--
+www.twbook.cc
+/
+石頭
+/
+UTF-8
+/
+find h1 class title
+text
+/
+find div class intro\sis-hidden-mobile
+text
+/
+find a class button\sis-primary
+get href
+trans
+/
+find div class content
+text
+/
+find div class chapter-content\spx-3\spb-5
+find h1
+text
+/
+find a class button 1
+get href
+tag
+find end
+out exist
+back tag
+trans
+--網站分隔線--
+m.xsw.tw
+/
+台灣
+/
+big5
+/
+find div class block_txt2
+find h2
+text
+/
+find div class intro_info
+text
+/
+find div class ablum_read
+find span
+find a
+get href
+trans
+/
+find div id nr1
+text
+/
+find div id nr_title
+text
+/
+find td class next 1
+find a
+get href
+tag
+find .html
+out not exist
+back tag
+trans
+--網站分隔線--
+www.sweetastes.com
+/
+碎片故事館
+/
+utf-8
+/
+find b class name
+text
+/
+find div class overdesc
+text
+/
+find ul class chapterlist
+find a
+get href
+trans
+/
+find div class novelcontent
+text
+/
+find div class novelread
+find h2
+text
+/
+find div class nextbox
+find a
+tag
+text
+out not exist 下一
+back tag
+get onclick
+split JumpUrl(' 1
+split ') 0
+trans
+--網站分隔線--
+m.xszj.org
+/
+小說之家
+/
+utf-8
+/
+find div id info
+find h1
+text
+/
+find div id intro
+text
+/
+find div class readbtn
+find a
+get href
+trans
+/
+find div id booktxt
+text
+/
+find h1 class bookname
+text
+/
+find div class bottem1
+find a -1
+tag
+text
+out exist 沒有
+back tag
+get href
+trans
+--網站分隔線--
+www.69xinshu.com
+/
+69
+/
+gbk
+/
+find div class booknav2
+find a
+text
+/
+find div class navtxt
+text
+/
+find div class addbtn
+find a
+get href
+trans
+find div class catalog 1
+find li
+find a
+get href
+trans
+/
+find div class txtnav
+extract h1
+text
+/
+find div class txtnav
+find h1
+text
+/
+find div class page1
+find a -1
+get href
+out exist end
+trans
+--網站分隔線--
+www.piaotia.com
+/
+飄天
+/
+gbk
+/
+find title
+text
+split 最新章節 0
+/
+find body
+find div id centerm
+find table
+find td valign top 1
+find div
+unwrap a
+unwrap span
+text
+/
+find div id centerm
+find table
+find td valign top
+find a
+get href
+trans
+find div class centent
+find a
+get href
+trans
+/
+find body
+extract h1
+text
+/
+find h1
+text
+/
+find div class toplink
+find a 2
+get href
+out exist index
+trans

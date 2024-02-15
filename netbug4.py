@@ -24,6 +24,7 @@ import itertools
 cc=OpenCC("s2tw")
 import collections
 from urllib.parse import urljoin
+from urllib.parse import urlparse
 
 def askYN(prt="滿意嗎？"):			#問是否問題
 	while True:
@@ -165,12 +166,13 @@ class CommandHandler:	#POP分析指令
 
 class SiteList:			#存著那些sites
 	def __init__(self):
-		site_file = open_file("site-data3.txt", 'r', False)
+		site_file = open_file("site-data.txt", 'r', False)
 		self.data = [Site(f) for f in 
 			site_file.read().split("\n--網站分隔線--\n")]
 		site_file.close()
 		
-	def find(self, sub_address):
+	def find(self, address):
+		sub_address = urlparse(address).netloc
 		for ele in self.data:
 			if ele.address_name == sub_address:
 				return ele
@@ -185,7 +187,7 @@ class SiteList:			#存著那些sites
 		self.data.append(new_obj)
 	
 	def write(self):
-		site_file = open_file("netbug-data3.txt", 'w', False)
+		site_file = open_file("site-data.txt", 'w', False)
 		site_file.write("\n--網站分隔線--\n".join(
 			map(str, self.data)))
 		site_file.close()
@@ -193,7 +195,7 @@ class SiteList:			#存著那些sites
 	def __contains__(self, site_data):
 		return site_data in self.data
 
-class Site:
+class Site:				#網站
 	def __init__(self, txt = None):
 		(self.address_name, self.client_name,
 			self.encoding, self.fnovelname, self.fpreread,
@@ -207,6 +209,7 @@ class Site:
 			self.fstart, self.fcontent, self.ftitle, self.fnext])
 	
 	headers = {"User-Agent" : "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36"}
+						#跳轉網址順便搞encoding
 	def trans(self, address, old_addr = None, is_test = False):
 		if old_addr is not None:
 			address = urljoin(old_addr, address)
@@ -214,10 +217,47 @@ class Site:
 		if self.encoding != "":
 			response.encoding = self.encoding
 		bs = BeautifulSoup(response.text, "lxml")
-		if is_test:
+		if not is_test:
 			return bs
 		elif self.encoding != "":
 			print(bs.getText().strip())
+			if askYN():
+				return bs
+		else:
+			assert bs.find("head") is not None, "head is None"
+			for metas in bs.find("head").find_all("meta"):
+				if not metas.get("charset") is None:
+					self.encoding = metas.get("charset")
+					break
+			if self.encoding == "":
+				self.encoding = response.encoding
+				print(bs.getText().strip())
+				print(f"默認encoding：{self.encoding}")
+				if askYN():
+					return bs
+			else:
+				try:
+					response.encoding = self.encoding
+					bs = BeautifulSoup(response.text, "lxml")
+					print(bs.getText().strip())
+				except:
+					print(f"網站提供encoding({self.encoding})有誤")
+				else:
+					print(f"網站提供encoding：{self.encoding}")
+					if askYN():
+						return bs
+		
+		while True:
+			self.encoding = input("輸入測試encoding：")
+			try:
+				response.encoding = self.encoding
+				bs = BeautifulSoup(response.text, "lxml")
+				print(bs.getText().strip())
+			except:
+				print("請輸入合法encoding")
+			else:
+				if askYN():
+					return bs
 
 class Out:
 	def __str__(self):
@@ -229,7 +269,7 @@ class Error:
 
 RunData = collections.namedtuple("RunData", "cnt, bs, address")
 
-class Run:
+class Run:				#跑時用
 	def __init__(self, bs, address = None):
 		self.bs = bs
 		self.address = address

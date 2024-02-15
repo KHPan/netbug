@@ -605,7 +605,7 @@ class Test:
 					new_stack = []
 					for c in codes:
 						new_stack.append(copy.copy(new_run))
-						new_run.run(c, self.site.trans)
+						new_run.run(c)
 						assert not isinstance(new_run.div, Error), "CODE_ERROR"
 				except:
 					traceback.print_exc()
@@ -617,7 +617,7 @@ class Test:
 			else:
 				old_runs = [copy.copy(run) for run in self.runs]
 				for index, run in enumerate(self.runs):
-					run.run(inp, self.site.trans)
+					run.run(inp)
 					if isinstance(run.div, Error):
 						print(f"第{index}個發生問題，這條不算")
 						self.runs = old_runs

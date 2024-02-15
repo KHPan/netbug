@@ -646,5 +646,5 @@ class Test:
 		for key in Test.fname:
 			if key == "fnext":
 				address = input("輸入最後一頁網址：")
-				self.runs.append(Run(Page(site, address)))
-			self.checkFunc(key)		
+				self.runs.append(Run(Page(self.site, address)))
+			self.checkFunc(key)

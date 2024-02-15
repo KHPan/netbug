@@ -22,7 +22,6 @@ random.seed(time.time())
 import re
 import itertools
 cc=OpenCC("s2tw")
-import collections
 from urllib.parse import urljoin
 from urllib.parse import urlparse
 
@@ -261,23 +260,6 @@ class Site:				#網站
 				if askYN():
 					return bs, address
 
-	def runFunc(self, code_name, bs = None, address = None):
-		code = getattr(self, code_name, None)
-		for i in range(3):
-			result, address = runCode(bs, code, address, self.trans,
-				is_show = (i == 2))
-			if not isinstance(result, Error):
-				return result, address
-			else:
-				assert i < 2, "三次錯誤!!"
-				print("出錯!!十秒後重新載入!!")
-				time.sleep(10)
-				print("十秒結束")
-				if address is not None:
-					self.trans(address)
-				else:
-					print("幾乎沒救了")
-
 class Out:
 	def __str__(self):
 		return "爬蟲結束"
@@ -286,11 +268,46 @@ class Error:
 	def __str__(self):
 		return "出現錯誤"
 
-class Run:				#跑時用
-	def __init__(self, bs, address = None):
-		self.bs = bs
+class Page:				#動態改動的頁面
+	def __init__(self, site, address):
+		self.site = site
 		self.address = address
-		self.div = self.bs
+		self.trans(address)
+	
+	def trans(self, address):
+		self.bs, self.address = self.site.trans(
+			address, self.address)
+				
+	def runCode(self, code, is_show = False):	#直接跑純程式碼
+		run = Run(self)
+		for line in code.splitlines():
+			if is_show:
+				print(run.div)
+				print(f"CODE:{line}")
+			run.run(line)
+			if isinstance(run.div, (Error, Out)):
+				break
+		if is_show:
+			print(run.div)
+		return run.div
+
+	def runFunc(self, code_name):		#跑site裡面的程式
+		code = getattr(self, code_name, None)
+		for i in range(3):
+			result = self.runCode(code, is_show = (i == 2))
+			if not isinstance(result, Error):
+				return result
+			else:
+				assert i < 2, "三次錯誤!!"
+				print("出錯!!十秒後重新載入!!")
+				time.sleep(10)
+				print("十秒結束")
+				self.trans(self.address)
+
+class Run:				#跑時用
+	def __init__(self, page):
+		self.page = page
+		self.div = self.page.bs
 		self.tag = None
 	
 	special_cmd = ("exist", "start")
@@ -324,7 +341,7 @@ class Run:				#跑時用
 				return [lst[index]] if is_list else lst[index]
 	
 	text_tag = ("p", "h1", "h2", "h3", "b", "em", "span")
-	def run(self, code, trans = None):
+	def run(self, code):
 		if isinstance(self.div, (Out, Error)):
 			return
 		if isinstance(code, CommandHandler):
@@ -360,7 +377,6 @@ class Run:				#跑時用
 				self.div = self.div.select_one(cmd.remain())
 				
 			elif cmd.isWord("trans"):
-				assert trans is not None, "不允許跳轉"
 				i1 = cmd.popInt()
 				i2 = cmd.popInt()
 				if i1 is not None:
@@ -368,8 +384,8 @@ class Run:				#跑時用
 						time.sleep(random.uniform(i1, i2))
 					else:
 						time.sleep(i1)
-				self.bs, self.address = trans(self.div, self.address)
-				self.div = self.bs
+				self.page.trans(self.div)
+				self.div = self.page.bs
 			
 			elif cmd.isWord("get"):
 				self.div = self.div.get(cmd.pop())
@@ -403,7 +419,7 @@ class Run:				#跑時用
 			
 			elif cmd.isWord("back"):
 				if cmd.isEmpty():
-					self.div = self.bs
+					self.div = self.page.bs
 				elif cmd.isWord("tag"):
 					self.div = self.tag
 			
@@ -431,19 +447,12 @@ class Run:				#跑時用
 			return str(self.div.prettify())
 		else:
 			return str(self.div)
-				
-def runCode(bs, code, address = None, trans = None, is_show = False):	#直接跑
-	run = Run(bs, address)
-	for line in code.splitlines():
-		if is_show:
-			print(run.div)
-			print(f"CODE:{line}")
-		run.run(line, trans = trans)
-		if isinstance(run.div, (Error, Out)):
-			break
-	if is_show:
-		print(run.div)
-	return run.div, run.address
+
+	def __copy__(self):
+		ret = Run(copy.copy(self.page))
+		ret.div = self.div
+		ret.tag = self.tag
+		return ret
 
 class ListStack:
 	def __init__(self, datas = None):
@@ -476,7 +485,7 @@ class ListStack:
 class Novel:
 	def __init__(self, site, address):
 		self.site = site
-		self.bs, self.address = self.site.trans(address)
+		self.page = Page(site, address)
 		self.file = None
 	
 	def setFile(self, file_name):
@@ -492,38 +501,38 @@ class Test:
 	def __init__(self, site, address):
 		self.site = site
 		bs, address = self.site.trans(address, is_test = True)
-		self.pages = [Run(bs, address)]
+		self.runs = [Run(bs, address)]
 		############################################################
 
 	def makeCode(self, code_name = ""):		#從頭創造code
-		for page in self.pages:
-			page.run("back")
+		for run in self.runs:
+			run.run("back")
 		codes = []
 		stack = ListStack()
-		print2(self.pages)
+		print2(self.runs)
 		while True:
 			inp = input(f"輸入{code_name}程式碼：")
 			if inp in ("ok", "done", ""):
 				return "\n".join(codes)
 			elif inp == "reset":
-				self.pages = stack.toBegin()
+				self.runs = stack.toBegin()
 				codes = []
-				print2(self.pages)
+				print2(self.runs)
 			elif inp == "undo":
 				if len(codes) == 0:
 					print("退無可退")
 				else:
-					self.pages = stack.pop()
+					self.runs = stack.pop()
 					codes.pop()
-					print2(self.pages)
+					print2(self.runs)
 			elif inp == "show":
-				print2(self.pages)
+				print2(self.runs)
 			elif inp.startswith("show "):
 				try:
 					cmd = CommandHandler(inp)
 					cmd.pop()
-					fas = [page.find(copy.copy(cmd), is_list = True)
-						for page in self.pages]
+					fas = [run.find(copy.copy(cmd), is_list = True)
+						for run in self.runs]
 					blocks = itertools.zip_longest(*fas)
 					for index, content in enumerate(blocks):
 						print(f"index:{index}")
@@ -538,36 +547,36 @@ class Test:
 					print("單一頁面無法刪除")
 				else:
 					stack.remove(index)
-					self.pages.pop(index)
-					print2(self.pages)
+					self.runs.pop(index)
+					print2(self.runs)
 			elif inp == "add":
 				address = input("輸入網址：")
 				try:
 					bs, address = self.site.trans(address,
-						self.pages[0].address)
-					new_page = Run(bs, address)
+						self.runs[0].address)
+					new_run = Run(bs, address)
 					new_stack = []
 					for c in codes:
-						new_stack.append(copy.copy(new_page))
-						new_page.run(c, self.site.trans)
-						assert not isinstance(new_page.div, Error), "CODE_ERROR"
+						new_stack.append(copy.copy(new_run))
+						new_run.run(c, self.site.trans)
+						assert not isinstance(new_run.div, Error), "CODE_ERROR"
 				except:
 					traceback.print_exc()
 					print("跳轉並跑出現問題")
 				else:
-					self.pages.append(new_page)
+					self.runs.append(new_run)
 					stack.append(new_stack)
-					print2(self.pages)
+					print2(self.runs)
 			else:
-				old_pages = [copy.copy(page) for page in self.pages]
-				for index, page in enumerate(self.pages):
-					page.run(inp, self.site.trans)
-					if isinstance(page.div, Error):
+				old_runs = [copy.copy(run) for run in self.runs]
+				for index, run in enumerate(self.runs):
+					run.run(inp, self.site.trans)
+					if isinstance(run.div, Error):
 						print(f"第{index}個發生問題，這條不算")
-						self.pages = old_pages
+						self.runs = old_runs
 						break
 				else:
 					codes.append(inp)
-					stack.push(old_pages)
-					print2(self.pages)
+					stack.push(old_runs)
+					print2(self.runs)
 

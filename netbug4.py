@@ -412,8 +412,13 @@ class Run:				#跑時用
 	def __str__(self):
 		return str(self.div.prettify())
 
-def runWithoutTrans(bs, code):	#字面上的意思
+def runWithoutTrans(bs, code, is_show = False):	#字面上的意思
 	run = Run(bs)
 	for line in code.splitlines():
+		if is_show:
+			print(run.div)
+			print(f"CODE:{line}")
 		run.run(line)
+	if is_show:
+		print(run.div)
 	return run.div

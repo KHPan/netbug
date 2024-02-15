@@ -218,11 +218,11 @@ class Site:				#網站
 			response.encoding = self.encoding
 		bs = BeautifulSoup(response.text, "lxml")
 		if not is_test:
-			return bs
+			return bs, address
 		elif self.encoding != "":
 			print(bs.getText().strip())
 			if askYN():
-				return bs
+				return bs, address
 		else:
 			assert bs.find("head") is not None, "head is None"
 			for metas in bs.find("head").find_all("meta"):
@@ -234,7 +234,7 @@ class Site:				#網站
 				print(bs.getText().strip())
 				print(f"默認encoding：{self.encoding}")
 				if askYN():
-					return bs
+					return bs, address
 			else:
 				try:
 					response.encoding = self.encoding
@@ -245,7 +245,7 @@ class Site:				#網站
 				else:
 					print(f"網站提供encoding：{self.encoding}")
 					if askYN():
-						return bs
+						return bs, address
 		
 		while True:
 			self.encoding = input("輸入測試encoding：")
@@ -257,7 +257,7 @@ class Site:				#網站
 				print("請輸入合法encoding")
 			else:
 				if askYN():
-					return bs
+					return bs, address
 
 class Out:
 	def __str__(self):

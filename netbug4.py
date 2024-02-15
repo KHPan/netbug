@@ -267,8 +267,6 @@ class Error:
 	def __str__(self):
 		return "出現錯誤"
 
-RunData = collections.namedtuple("RunData", "cnt, bs, address")
-
 class Run:				#跑時用
 	def __init__(self, bs, address = None):
 		self.bs = bs

@@ -22,6 +22,7 @@ random.seed(time.time())
 import re
 import itertools
 cc=OpenCC("s2tw")
+import collections
 
 def askYN(prt="滿意嗎？"):			#問是否問題
 	while True:
@@ -203,3 +204,6 @@ class Site:
 		return "\n/\n".join([self.address_name, self.client_name,
 			self.encoding, self.fnovelname, self.fpreread,
 			self.fstart, self.fcontent, self.ftitle, self.fnext])
+
+RunData = collections.namedtuple("RunData", "cnt, bs, address")
+

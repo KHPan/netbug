@@ -261,6 +261,23 @@ class Site:				#網站
 				if askYN():
 					return bs, address
 
+	def runFunc(self, code_name, bs = None, address = None):
+		code = getattr(self, code_name, None)
+		for i in range(3):
+			result, address = runCode(bs, code, address, self.trans,
+				is_show = (i == 2))
+			if not isinstance(result, Error):
+				return result, address
+			else:
+				assert i < 2, "三次錯誤!!"
+				print("出錯!!十秒後重新載入!!")
+				time.sleep(10)
+				print("十秒結束")
+				if address is not None:
+					self.trans(address)
+				else:
+					print("幾乎沒救了")
+
 class Out:
 	def __str__(self):
 		return "爬蟲結束"
@@ -414,22 +431,19 @@ class Run:				#跑時用
 			return str(self.div.prettify())
 		else:
 			return str(self.div)
-
-def runCode(bs, code, trans = None, is_show = False):	#直接跑
-	run = Run(bs, trans)
+				
+def runCode(bs, code, address = None, trans = None, is_show = False):	#直接跑
+	run = Run(bs, address)
 	for line in code.splitlines():
 		if is_show:
 			print(run.div)
 			print(f"CODE:{line}")
 		run.run(line, trans = trans)
-		if isinstance(run.div, (Out, Error)):
+		if isinstance(run.div, (Error, Out)):
 			break
 	if is_show:
 		print(run.div)
-	if trans is None:
-		return run.div
-	else:
-		return run.bs, run.address
+	return run.div, run.address
 
 class ListStack:
 	def __init__(self, datas = None):
@@ -458,6 +472,21 @@ class ListStack:
 	
 	def width(self):
 		return len(self.data[0])
+
+class Novel:
+	def __init__(self, site, address):
+		self.site = site
+		self.bs, self.address = self.site.trans(address)
+		self.file = None
+	
+	def setFile(self, file_name):
+		self.file_name = file_name
+		self.file = open_file(file_name, 'w', True)
+	
+	def __del__(self):
+		if self.file is not None:
+			self.file.close()
+	
 
 class Test:
 	def __init__(self, site, address):

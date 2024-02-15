@@ -269,14 +269,14 @@ class Error:
 		return "出現錯誤"
 
 class Page:				#動態改動的頁面
-	def __init__(self, site, address):
+	def __init__(self, site, address, is_test = False):
 		self.site = site
 		self.address = address
-		self.trans(address)
+		self.trans(address, is_test)
 	
-	def trans(self, address):
+	def trans(self, address, is_test = False):
 		self.bs, self.address = self.site.trans(
-			address, self.address)
+			address, self.address, is_test)
 				
 	def runCode(self, code, is_show = False):	#直接跑純程式碼
 		run = Run(self)
@@ -483,10 +483,13 @@ class ListStack:
 		return len(self.data[0])
 
 class Novel:
-	def __init__(self, site, address):
+	def __init__(self, site, address = None):
 		self.site = site
+		if address is None:
+			return
 		self.page = Page(site, address)
 		self.file = None
+		self.file_name = None
 	
 	def setFile(self, file_name):
 		self.file_name = file_name
@@ -496,14 +499,64 @@ class Novel:
 		if self.file is not None:
 			self.file.close()
 	
+	def text(self, cnt):
+		if cnt == 0:
+			preread = self.page.runFunc("fpreread")
+			print(f"{self.file_name}：前言")
+			self.file.write(preread)
+			self.file.write("\n")
+		else:
+			content = self.page.runFunc("fcontent")
+			title = self.page.runFunc("ftitle")
+			if title == "":
+				print(f"{self.file_name}：第{cnt}頁")
+			else:
+				if not isTitle(content):
+					content = title + "\n" + content
+					if not isTitle(content):
+						content = f"第{cnt}章 " + content
+				print(self.file_name + "：" + 
+					content[:content.find("\n")])
+			self.file.write(content + "\n")
+
+	def novelName(self):
+		return self.page.runFunc("fnovelname")
+
+	def __copy__(self):
+		ret = Novel(self.site)
+		ret.page = copy.copy(self.page)
+		ret.file = self.file
+		ret.file_name = self.file_name
+
+	def __iter__(self):
+		yd = copy.copy(self)
+		self.page.runFunc("fstart")
+		yield yd
+		while True:
+			yd = copy.copy(self)
+			if isinstance(self.page.runFunc("fnext"), Out):
+				yield yd
+				return
+			yield yd
 
 class Test:
+	fname = {"fnovelname" : "小說名",
+			"fpreread" : "前言",
+			"fstart" : "開始",
+			"fcontent" : "內文",
+			"ftitle" : "章節標題(若無則nothing)",
+			"fnext" : "下一章或out"}
+	
+	#這裡直接就是全部的test
 	def __init__(self, site, address):
 		self.site = site
-		bs, address = self.site.trans(address, is_test = True)
-		self.runs = [Run(bs, address)]
-		############################################################
-
+		self.runs = [Run(Page(site, address, is_test = True))]
+		for key in Test.fname:
+			if key == "fnext":
+				address = input("輸入最後一頁網址：")
+				self.runs.append(Run(Page(site, address)))
+			self.checkFunc(key)
+		
 	def makeCode(self, code_name = ""):		#從頭創造code
 		for run in self.runs:
 			run.run("back")
@@ -580,3 +633,17 @@ class Test:
 					stack.push(old_runs)
 					print2(self.runs)
 
+	def checkFunc(self, code_name):		#從site創或改code
+		runs_copy = [copy.copy(run) for run in self.runs]
+		try:
+			results = [run.page.runFunc(code_name) for run in self.runs]
+		except:
+			traceback.print_exc()
+			print("出問題了，重寫code")
+		else:
+			print2(results)
+			if askYN(f"{Test.fname[code_name]}滿意嗎？"):
+				return
+		
+		self.runs = runs_copy
+		setattr(self.site, code_name, self.makeCode(Test.fname[code_name]))

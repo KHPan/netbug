@@ -521,7 +521,7 @@ class Test:
 					for c in codes:
 						new_stack.append(copy.copy(new_page))
 						new_page.run(c, self.site.trans)
-						assert not isinstance(new_page.div, Error)
+						assert not isinstance(new_page.div, Error), "CODE_ERROR"
 				except:
 					traceback.print_exc()
 					print("跳轉並跑出現問題")

@@ -90,7 +90,7 @@ def _custom_wrap(text, width):	#print2專用，照寬切字串
 			yield (current_line +
 				" " * (width - line_length))
 
-def print2(strs):		#並排寫多段字串並加分隔線
+def print2(strs, insert_str = ""):		#並排寫多段字串並加分隔線
 	rows, _ = os.get_terminal_size()
 	if len(strs) == 1:
 		print(strs[0])
@@ -100,6 +100,8 @@ def print2(strs):		#並排寫多段字串並加分隔線
 		iters = (_custom_wrap(txt, ele_width) for txt in strs)
 		for line in itertools.zip_longest(*iters, fillvalue = " " * ele_width):
 			print(separator.join(line))
+	if insert_str != "":
+		print(insert_str)
 	print('\u2588' * rows)
 
 class CommandHandler:	#POP分析指令
@@ -306,6 +308,8 @@ class Run:				#跑時用
 	
 	text_tag = ("p", "h1", "h2", "h3", "b", "em", "span")
 	def run(self, code, trans = None):
+		if isinstance(self.div, (Out, Error)):
+			return
 		if isinstance(code, CommandHandler):
 			cmd = code
 			code = str(code)
@@ -400,15 +404,16 @@ class Run:				#跑時用
 				print("指令不存在或有多餘字符")
 				print(f"remain:{cmd.remain()}")
 				self.div = Error()
-				return False
 		except:
 			print(f"CODE_ERROR:{code}")
 			traceback.print_exc()
 			self.div = Error()
-			return False
 
 	def __str__(self):
-		return str(self.div.prettify())
+		if hasattr(self.div, "prettify"):
+			return str(self.div.prettify())
+		else:
+			return str(self.div)
 
 def runCode(bs, code, trans = None, is_show = False):	#直接跑
 	run = Run(bs, trans)
@@ -425,3 +430,115 @@ def runCode(bs, code, trans = None, is_show = False):	#直接跑
 		return run.div
 	else:
 		return run.bs, run.address
+
+class ListStack:
+	def __init__(self, datas = None):
+		self.data = []
+		if datas is not None:
+			self.push(datas)
+	
+	def push(self, datas):
+		self.data.append(datas)
+	
+	def pop(self):
+		return self.data.pop()
+	
+	def toBegin(self):
+		ret = self.data[0]
+		self.data = []
+		return ret
+	
+	def remove(self, index):
+		for data in self.data:
+			data.pop(index)
+	
+	def append(self, it):
+		for base, add in zip(self.data, it):
+			base.append(add)
+	
+	def width(self):
+		return len(self.data[0])
+
+class Test:
+	def __init__(self, site, address):
+		self.site = site
+		bs, address = self.site.trans(address, is_test = True)
+		self.pages = [Run(bs, address)]
+		############################################################
+
+	def makeCode(self, code_name = ""):		#從頭創造code
+		for page in self.pages:
+			page.run("back")
+		codes = []
+		stack = ListStack()
+		print2(self.pages)
+		while True:
+			inp = input(f"輸入{code_name}程式碼：")
+			if inp in ("ok", "done", ""):
+				return "\n".join(codes)
+			elif inp == "reset":
+				self.pages = stack.toBegin()
+				codes = []
+				print2(self.pages)
+			elif inp == "undo":
+				if len(codes) == 0:
+					print("退無可退")
+				else:
+					self.pages = stack.pop()
+					codes.pop()
+					print2(self.pages)
+			elif inp == "show":
+				print2(self.pages)
+			elif inp.startswith("show "):
+				try:
+					cmd = CommandHandler(inp)
+					cmd.pop()
+					fas = [page.find(copy.copy(cmd), is_list = True)
+						for page in self.pages]
+					blocks = itertools.zip_longest(*fas)
+					for index, content in enumerate(blocks):
+						print(f"index:{index}")
+						print2(content, insert_str = f"index:{index}")
+				except:
+					traceback.print_exc()
+			elif inp.startswith("remove "):
+				index = int(inp.split(" ")[1])
+				if index >= stack.width():
+					print("超出範圍")
+				elif stack.width() == 1:
+					print("單一頁面無法刪除")
+				else:
+					stack.remove(index)
+					self.pages.pop(index)
+					print2(self.pages)
+			elif inp == "add":
+				address = input("輸入網址：")
+				try:
+					bs, address = self.site.trans(address,
+						self.pages[0].address)
+					new_page = Run(bs, address)
+					new_stack = []
+					for c in codes:
+						new_stack.append(copy.copy(new_page))
+						new_page.run(c)
+						assert not isinstance(new_page.div, Error)
+				except:
+					traceback.print_exc()
+					print("跳轉並跑出現問題")
+				else:
+					self.pages.append(new_page)
+					stack.append(new_stack)
+					print2(self.pages)
+			else:
+				old_pages = [copy.copy(page) for page in self.pages]
+				for index, page in enumerate(self.pages):
+					page.run(inp)
+					if isinstance(page.div, Error):
+						print(f"第{index}個發生問題，這條不算")
+						self.pages = old_pages
+						break
+				else:
+					codes.append(inp)
+					stack.push(old_pages)
+					print2(self.pages)
+

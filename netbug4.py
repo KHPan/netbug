@@ -547,15 +547,9 @@ class Test:
 			"ftitle" : "章節標題(若無則nothing)",
 			"fnext" : "下一章或out"}
 	
-	#這裡直接就是全部的test
 	def __init__(self, site, address):
 		self.site = site
 		self.runs = [Run(Page(site, address, is_test = True))]
-		for key in Test.fname:
-			if key == "fnext":
-				address = input("輸入最後一頁網址：")
-				self.runs.append(Run(Page(site, address)))
-			self.checkFunc(key)
 		
 	def makeCode(self, code_name = ""):		#從頭創造code
 		for run in self.runs:
@@ -647,3 +641,10 @@ class Test:
 		
 		self.runs = runs_copy
 		setattr(self.site, code_name, self.makeCode(Test.fname[code_name]))
+
+	def test(self):			#test主程式
+		for key in Test.fname:
+			if key == "fnext":
+				address = input("輸入最後一頁網址：")
+				self.runs.append(Run(Page(site, address)))
+			self.checkFunc(key)		

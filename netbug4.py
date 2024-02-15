@@ -410,8 +410,8 @@ class Run:				#跑時用
 	def __str__(self):
 		return str(self.div.prettify())
 
-def runWithoutTrans(bs, code, is_show = False):	#字面上的意思
-	run = Run(bs)
+def runCode(bs, code, trans = None, is_show = False):	#直接跑
+	run = Run(bs, trans)
 	for line in code.splitlines():
 		if is_show:
 			print(run.div)
@@ -419,4 +419,7 @@ def runWithoutTrans(bs, code, is_show = False):	#字面上的意思
 		run.run(line)
 	if is_show:
 		print(run.div)
-	return run.div
+	if trans is None:
+		return run.div
+	else:
+		return run.bs, run.address

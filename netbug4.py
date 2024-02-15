@@ -66,6 +66,35 @@ def open_file(file_name, mode, is_novel):	#開啟檔案
 			ret=open(file_name, mode, encoding="utf-8")
 	return ret
 
-def print2(strs):       #並排寫多段字串並加分隔線
-	pass
+def _custom_wrap(text, width):	#print2專用，照寬切字串
+	lines = str(text).replace("\t", "  ").splitlines()
+	for line in lines:
+		line_length = 0
+		current_line = ""
+		for char in line:
+			char_width = wcwidth.wcswidth(char)
+			if char_width < 0:
+				char_width = 1
+			if line_length + char_width <= width:
+				line_length += char_width
+			else:
+				yield (current_line +
+					" " * (width - line_length))
+				line_length = char_width
+				current_line = ""
+			current_line += char
+		if line_length > 0:
+			yield (current_line +
+				" " * (width - line_length))
 
+def print2(strs):		#並排寫多段字串並加分隔線
+	rows, _ = os.get_terminal_size()
+	if len(strs) == 1:
+		print(str[0])
+	else:
+		separator = " \u2588 "
+		ele_width = (rows + len(separator)) // len(strs) - len(separator)
+		iters = (_custom_wrap(txt, ele_width) for txt in strs)
+		for line in itertools.zip_longest(*iters, fillvalue = " " * ele_width):
+			print(separator.join(line))
+	print('\u2588' * rows)

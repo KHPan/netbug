@@ -160,3 +160,46 @@ class CommandHandler:	#POP分析指令
 	
 	def __str__(self):
 		return " ".join(self.spt)
+
+class SiteList:			#存著那些sites
+	def __init__(self):
+		site_file = open_file("site-data3.txt", 'r', False)
+		self.data = [Site(f) for f in 
+			site_file.read().split("\n--網站分隔線--\n")]
+		site_file.close()
+		
+	def find(self, sub_address):
+		for ele in self.data:
+			if ele.address_name == sub_address:
+				return ele
+		return None
+		
+	def showSites(self):
+		for site in self.data:
+			print(site.client_name + "：" +
+				site.address_name)
+	
+	def append(self, new_obj):
+		self.data.append(new_obj)
+	
+	def write(self):
+		site_file = open_file("netbug-data3.txt", 'w', False)
+		site_file.write("\n--網站分隔線--\n".join(
+			map(str, self.data)))
+		site_file.close()
+		
+	def __contains__(self, site_data):
+		return site_data in self.data
+
+class Site:
+	def __init__(self, txt = None):
+		(self.address_name, self.client_name,
+			self.encoding, self.fnovelname, self.fpreread,
+			self.fstart, self.fcontent, self.ftitle, self.fnext
+			) = (itertools.repeat("", 9) if txt is None
+			else txt.split("\n/\n"))
+	
+	def __str__(self):
+		return "\n/\n".join([self.address_name, self.client_name,
+			self.encoding, self.fnovelname, self.fpreread,
+			self.fstart, self.fcontent, self.ftitle, self.fnext])

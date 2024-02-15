@@ -408,3 +408,6 @@ class Run:				#跑時用
 			traceback.print_exc()
 			self.div = Error()
 			return False
+
+	def __str__(self):
+		return str(self.div.prettify())

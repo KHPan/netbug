@@ -292,7 +292,7 @@ class Page:				#動態改動的頁面
 		return run.div
 
 	def runFunc(self, code_name):		#跑site裡面的程式
-		code = getattr(self, code_name, None)
+		code = getattr(self.site, code_name, None)
 		for i in range(3):
 			result = self.runCode(code, is_show = (i == 2))
 			if not isinstance(result, Error):
@@ -628,26 +628,32 @@ class Test:
 					print2(self.runs)
 
 	def checkFunc(self, code_name):		#從site創或改code
-		runs_copy = [copy.copy(run) for run in self.runs]
-		try:
-			results = [run.page.runFunc(code_name) for run in self.runs]
-		except:
-			traceback.print_exc()
-			print("出問題了，重寫code")
-		else:
-			print2(results)
-			if askYN(f"{Test.fname[code_name]}滿意嗎？"):
-				return
-		
-		self.runs = runs_copy
+		if getattr(self.site, code_name, None) != "":
+			runs_copy = [copy.copy(run) for run in self.runs]
+			try:
+				results = [run.page.runFunc(code_name) for run in self.runs]
+			except:
+				traceback.print_exc()
+				print("出問題了，重寫code")
+			else:
+				print2(results)
+				if askYN(f"{Test.fname[code_name]}滿意嗎？"):
+					return		
+			self.runs = runs_copy
 		setattr(self.site, code_name, self.makeCode(Test.fname[code_name]))
 
 	def test(self, site_list):			#test主程式
 		try:
 			for key in Test.fname:
 				if key == "fnext":
-					address = input("輸入最後一頁網址：")
-					self.runs.append(Run(Page(self.site, address)))
+					while True:
+						address = input("輸入最後一頁網址：")
+						try:
+							self.runs.append(Run(Page(self.site, address)))
+						except requests.exceptions.RequestException:
+							print("請輸入合法網址")
+						else:
+							break
 				self.checkFunc(key)
 			site_list.write()
 			print("成功寫入檔案")
@@ -655,3 +661,4 @@ class Test:
 			file = open_file("test-data.txt", 'w', False)
 			file.write(str(self.site))
 			file.close()
+			print("目前進度寫入備用檔案")

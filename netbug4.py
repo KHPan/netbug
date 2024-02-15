@@ -520,7 +520,7 @@ class Test:
 					new_stack = []
 					for c in codes:
 						new_stack.append(copy.copy(new_page))
-						new_page.run(c)
+						new_page.run(c, self.site.trans)
 						assert not isinstance(new_page.div, Error)
 				except:
 					traceback.print_exc()
@@ -532,7 +532,7 @@ class Test:
 			else:
 				old_pages = [copy.copy(page) for page in self.pages]
 				for index, page in enumerate(self.pages):
-					page.run(inp)
+					page.run(inp, self.site.trans)
 					if isinstance(page.div, Error):
 						print(f"第{index}個發生問題，這條不算")
 						self.pages = old_pages

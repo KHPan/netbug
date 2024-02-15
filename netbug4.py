@@ -23,6 +23,7 @@ import re
 import itertools
 cc=OpenCC("s2tw")
 import collections
+from urllib.parse import urljoin
 
 def askYN(prt="滿意嗎？"):			#問是否問題
 	while True:
@@ -204,6 +205,19 @@ class Site:
 		return "\n/\n".join([self.address_name, self.client_name,
 			self.encoding, self.fnovelname, self.fpreread,
 			self.fstart, self.fcontent, self.ftitle, self.fnext])
+	
+	headers = {"User-Agent" : "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36"}
+	def trans(self, address, old_addr = None, is_test = False):
+		if old_addr is not None:
+			address = urljoin(old_addr, address)
+		response = requests.get(address, headers = Site.headers)
+		if self.encoding != "":
+			response.encoding = self.encoding
+		bs = BeautifulSoup(response.text, "lxml")
+		if is_test:
+			return bs
+		elif self.encoding != "":
+			print(bs.getText().strip())
 
 class Out:
 	def __str__(self):
@@ -262,32 +276,25 @@ class Run:
 		try:
 			if cmd.isWord("text"):
 				self.div = copy.copy(self.div)
-				for ele in self.div.find_all(recursive=False):
-					if ele.name == "br":
-						ele.replace_with("\n")
-					elif ele.name in Run.text_tag:
-						ele.replace_with(ele.getText()+"\n")
-					else:
-						ele.extract()
-				self.div = cc.convert(self.div.getText())
-				start = 0
-				while start<len(self.div):
-					if not isSpace(self.div[start]):
+				while True:
+					flst = self.div.find_all(recursive=False)
+					if len(flst) == 0:
 						break
-					start = start + 1
-				end = len(self.div) - 1
-				while end>start:
-					if not isSpace(self.div[end]):
-						break
-					end = end - 1
-				if start >= end:
-					self.div = ""
-				else:
-					self.div = self.div[start:(end+1)]
+					for ele in flst:
+						if ele.name == "br":
+							ele.replace_with("\n")
+						elif ele.name in Run.text_tag:
+							ele.append("\n")
+							ele.unwrap()
+						else:
+							ele.extract()
+				self.div = cc.convert(self.div.getText().strip())
 			
 			elif cmd.isWord("unwrap"):
 				self.div = copy.copy(self.div)
+				word = "" if cmd.isEmpty() else cmd.pop()
 				for ele in self.find(cmd, is_list = True):
+					ele.insert_before(word)
 					ele.unwrap()
 			
 			elif cmd.isWord("select"):

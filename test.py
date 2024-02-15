@@ -8,4 +8,4 @@ if __name__ == "__main__":
     while True:
         inp = input()
         run.run(inp)
-        netbug4.print2((run.div.prettify(),))
+        netbug4.print2((run.div,))

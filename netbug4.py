@@ -91,7 +91,7 @@ def _custom_wrap(text, width):	#print2專用，照寬切字串
 def print2(strs):		#並排寫多段字串並加分隔線
 	rows, _ = os.get_terminal_size()
 	if len(strs) == 1:
-		print(str[0])
+		print(strs[0])
 	else:
 		separator = " \u2588 "
 		ele_width = (rows + len(separator)) // len(strs) - len(separator)
@@ -215,3 +215,149 @@ class Error:
 
 RunData = collections.namedtuple("RunData", "cnt, bs, address")
 
+class Run:
+	def __init__(self, bs, address = None):
+		self.bs = bs
+		self.address = address
+		self.div = self.bs
+		self.tag = None
+	
+	special_cmd = ("exist", "start")
+	def find(self, cmd, *, is_list):
+		tag_name = cmd.pop()
+		if len(cmd) < 2 or cmd[0] in Run.special_cmd:
+			attrs = {}
+		else:
+			attr_name = cmd.pop()
+			if attr_name == "class":
+				attr_name = "class_"
+			target = cmd.pop()
+			if cmd.isWord("exist"):
+				target = re.compile(target)
+			elif cmd.isWord("start"):
+				target = re.compile("^" + target)
+			attrs = {attr_name : target}
+		
+		if cmd.isEmpty():
+			if is_list:
+				ret = self.div.find_all(tag_name, **attrs)
+				return ret if ret else []
+			else:
+				return self.div.find(tag_name, **attrs)
+		else:
+			lst = self.div.find_all(tag_name, **attrs)
+			index = cmd.popInt()
+			if lst is None or index >= len(lst):
+				return [] if is_list else None
+			else:
+				return [lst[index]] if is_list else lst[index]
+	
+	text_tag = ("p", "h1", "h2", "h3", "b", "em", "span")
+	def run(self, code, trans = None):
+		if isinstance(code, CommandHandler):
+			cmd = code
+			code = str(code)
+		else:
+			cmd = CommandHandler(code)
+		try:
+			if cmd.isWord("text"):
+				self.div = copy.copy(self.div)
+				for ele in self.div.find_all(recursive=False):
+					if ele.name == "br":
+						ele.replace_with("\n")
+					elif ele.name in Run.text_tag:
+						ele.replace_with(ele.getText()+"\n")
+					else:
+						ele.extract()
+				self.div = cc.convert(self.div.getText())
+				start = 0
+				while start<len(self.div):
+					if not isSpace(self.div[start]):
+						break
+					start = start + 1
+				end = len(self.div) - 1
+				while end>start:
+					if not isSpace(self.div[end]):
+						break
+					end = end - 1
+				if start >= end:
+					self.div = ""
+				else:
+					self.div = self.div[start:(end+1)]
+			
+			elif cmd.isWord("unwrap"):
+				self.div = copy.copy(self.div)
+				for ele in self.find(cmd, is_list = True):
+					ele.unwrap()
+			
+			elif cmd.isWord("select"):
+				self.div = self.div.select_one(cmd.remain())
+				
+			elif cmd.isWord("trans"):
+				assert trans is not None, "不允許跳轉"
+				i1 = cmd.popInt()
+				i2 = cmd.popInt()
+				if i1 is not None:
+					if i2 is not None:
+						time.sleep(random.uniform(i1, i2))
+					else:
+						time.sleep(i1)
+				self.bs, self.address = trans(self.div, self.address)
+				self.div = self.bs
+			
+			elif cmd.isWord("get"):
+				self.div = self.div.get(cmd.pop())
+			
+			elif cmd.isWord("extract"):
+				self.div = copy.copy(self.div)
+				for ele in self.find(cmd, is_list = True):
+					ele.extract()
+			
+			elif cmd.isWord("find"):
+				if isinstance(self.div, str):
+					self.div = self.div.find(cmd.pop())
+				else:
+					self.div = self.find(cmd, is_list = False)
+			
+			elif cmd.isWord("out"):
+				if cmd.isWord("exist"):
+					if cmd.isEmpty():
+						if self.div != -1 and not self.div is None:
+							self.div = Out()
+					else:
+						if str(self.div).find(cmd.pop()) != -1:
+							self.div = Out()
+				elif cmd.isWord(["not", "exist"]):
+					if cmd.isEmpty():
+						if self.div == -1 or self.div is None:
+							self.div = Out()
+					else:
+						if str(self.div).find(cmd.pop()) == -1:
+							self.div = Out()
+			
+			elif cmd.isWord("back"):
+				if cmd.isEmpty():
+					self.div = self.bs
+				elif cmd.isWord("tag"):
+					self.div = self.tag
+			
+			elif cmd.isWord("nothing"):
+				self.div = ""
+			
+			elif cmd.isWord("split"):
+				self.div = self.div.split(cmd.pop())[cmd.popInt()]
+			
+			elif cmd.isWord("tag"):
+				self.tag = self.div
+			
+			if not cmd.isEmpty():
+				print(f"CODE_ERROR:{code}")
+				print("指令不存在或有多餘字符")
+				print(f"remain:{cmd.remain()}")
+				self.div = Error()
+				return False
+		except:
+			print(f"CODE_ERROR:{code}")
+			traceback.print_exc()
+			self.div = Error()
+			return False

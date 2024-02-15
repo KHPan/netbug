@@ -205,5 +205,13 @@ class Site:
 			self.encoding, self.fnovelname, self.fpreread,
 			self.fstart, self.fcontent, self.ftitle, self.fnext])
 
+class Out:
+	def __str__(self):
+		return "爬蟲結束"
+
+class Error:
+	def __str__(self):
+		return "出現錯誤"
+
 RunData = collections.namedtuple("RunData", "cnt, bs, address")
 

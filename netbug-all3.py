@@ -22,7 +22,6 @@ import random
 random.seed(time.time())
 import re
 
-is_colab=False
 is_show_steps=False
 cc=OpenCC("s2tw")
 

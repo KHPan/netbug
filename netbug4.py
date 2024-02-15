@@ -66,3 +66,6 @@ def open_file(file_name, mode, is_novel):	#開啟檔案
 			ret=open(file_name, mode, encoding="utf-8")
 	return ret
 
+def print2(strs):       #並排寫多段字串並加分隔線
+	pass
+

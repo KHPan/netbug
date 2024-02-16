@@ -1,29 +1,16 @@
-ixdzs8.tw
+big5.quanben5.com
 /
-愛下tw
+全本big5
 /
 utf-8
 /
-find div class n-text
-find h1
-text
+
 /
-find p id intro
-text
+
 /
-find span id readbtn
-find a
-get href
-trans
+
 /
-find section
-text
+
 /
-find article class page-content
-find h3
-text
+
 /
-find div class read-next\sburl
-get data-url
-out exist end
-trans

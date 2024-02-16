@@ -96,9 +96,11 @@ def print2(strs, insert_str = ""):		#並排寫多段字串並加分隔線
 	else:
 		separator = " \u2588 "
 		ele_width = (rows + len(separator)) // len(strs) - len(separator)
+		end = (rows + len(separator)) % len(strs)
+		end = " " * end
 		iters = (_custom_wrap(txt, ele_width) for txt in strs)
 		for line in itertools.zip_longest(*iters, fillvalue = " " * ele_width):
-			print(separator.join(line))
+			print(separator.join(line), end = end)
 	if insert_str != "":
 		print(insert_str)
 	print('\u2588' * rows)
@@ -603,9 +605,9 @@ class Test:
 			elif inp == "add":
 				address = input("輸入網址：")
 				try:
-					bs, address = self.site.trans(address,
-						self.runs[0].address)
-					new_run = Run(bs, address)
+					new_page = copy.copy(self.runs[0].page)
+					new_page.trans(address)
+					new_run = Run(new_page)
 					new_stack = []
 					for c in codes:
 						new_stack.append(copy.copy(new_run))

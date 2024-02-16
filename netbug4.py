@@ -655,6 +655,8 @@ class Test:
 						else:
 							break
 				self.checkFunc(key)
+			if self.site not in site_list:
+				site_list.append(self.site)
 			site_list.write()
 			print("成功寫入檔案")
 		except KeyboardInterrupt:

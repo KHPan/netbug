@@ -282,13 +282,14 @@ class Page:				#動態改動的頁面
 		run = Run(self)
 		for line in code.splitlines():
 			if is_show:
-				print(run.div)
+				print2(run.div)
 				print(f"CODE:{line}")
 			run.run(line)
 			if isinstance(run.div, (Error, Out)):
 				break
 		if is_show:
-			print(run.div)
+			print2(run.div)
+			print("網址：" + run.page.address)
 		return run.div
 
 	def runFunc(self, code_name):		#跑site裡面的程式
@@ -535,7 +536,7 @@ class Novel:
 		ret.file_name = self.file_name
 		return ret
 
-	def iterAll(self):
+	def __iter__(self):
 		yd = copy.copy(self)
 		self.page.runFunc("fstart")
 		yield yd
@@ -564,7 +565,7 @@ class Test:
 			if (self.site.client_name == ""
 				or not askYN(f"網站名：{self.site.client_name}，滿意嗎？")):
 				self.site.client_name = input("輸入網站名：")
-			self.runs = [Run(Page(site, address, is_test = True))]
+			self.runs = [Run(Page(self.site, address, is_test = True))]
 			self.testCode()
 			if self.site not in site_list:
 				site_list.append(self.site)
@@ -671,6 +672,7 @@ class Test:
 				if askYN(f"{Test.fname[code_name]}滿意嗎？"):
 					return		
 			self.runs = runs_copy
+			print2(f"OLD CODE:\n{getattr(self.site, code_name)}")
 		setattr(self.site, code_name, self.makeCode(Test.fname[code_name]))
 
 	def testCode(self):			#test程式碼之後
@@ -686,5 +688,79 @@ class Test:
 						break
 			self.checkFunc(key)
 
+def iterMix(lst):
+	lst = [enumerate(i) for i in lst]
+	while len(lst) > 0:
+		for i in lst[:]:
+			try:
+				yield next(i)
+			except StopIteration:
+				lst.remove(i)
+	#return filter(lambda n:n is not None, itertools.chain.from_iterable(itertools.zip_longest(*map(enumerate, lst))))
+
 if __name__ == "__main__":
 	site_list = SiteList()
+	is_test = False
+	while True:
+		#輸入部分
+		novels = []
+		while True:
+			print("輸入測試網址：" if is_test
+				else "輸入爬蟲網址：")
+			try:
+				address = input()
+			except KeyboardInterrupt:
+				print("程式結束，KeyboardInterrupt")
+				sys.exit()
+			#檢查指令
+			if address in ("t", "T"):
+				if not is_test and len(novels) > 0:
+					if not askYN("變為測試模式將會刪除之前輸入的爬蟲請求，確定？"):
+						continue
+					novels = []
+				is_test = not is_test
+				continue
+			elif address in ("ok", "", "done", "start"):
+				if is_test:
+					print(f"{address}指令是爬蟲模式專用")
+					continue
+				elif len(novels) == 0:
+					print("未輸入爬蟲請求")
+					continue
+				else:
+					break
+			elif address == "show":
+				site_list.showSites()
+				continue
+
+			#test模式只需Test即可
+			if is_test:
+				break
+
+			site = site_list.find(address)
+			if site is None:
+				print("未登錄網站，請使用以下網站：")
+				site_list.showSites()
+				continue
+			try:
+				novel = Novel(site, address)
+				novel.setFile()
+			except:
+				traceback.print_exc()
+				print("出問題!!爬蟲請求未載入!!")
+			else:
+				novels.append(novel)
+			
+		#跑的部分
+		try:
+			if is_test:
+				Test(address, site_list)
+			else:
+				for cnt, page in iterMix(iter(novels)):
+					page.text(cnt)
+		except:
+			traceback.print_exc()
+			print("出問題!!重來!!")
+			for novel in novels:
+				novel.closeFile()
+

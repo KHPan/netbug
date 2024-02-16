@@ -495,7 +495,7 @@ class Novel:
 		self.file_name = file_name
 		self.file = open_file(file_name, 'w', True)
 	
-	def __del__(self):
+	def closeFile(self):
 		if self.file is not None:
 			self.file.close()
 	
@@ -527,8 +527,9 @@ class Novel:
 		ret.page = copy.copy(self.page)
 		ret.file = self.file
 		ret.file_name = self.file_name
+		return ret
 
-	def __iter__(self):
+	def iterAll(self):
 		yd = copy.copy(self)
 		self.page.runFunc("fstart")
 		yield yd
@@ -536,6 +537,7 @@ class Novel:
 			yd = copy.copy(self)
 			if isinstance(self.page.runFunc("fnext"), Out):
 				yield yd
+				self.closeFile()
 				return
 			yield yd
 
@@ -582,12 +584,18 @@ class Test:
 				try:
 					cmd = CommandHandler(inp)
 					cmd.pop()
-					fas = [run.find(copy.copy(cmd), is_list = True)
-						for run in self.runs]
-					blocks = itertools.zip_longest(*fas)
-					for index, content in enumerate(blocks):
-						print(f"index:{index}")
-						print2(content, insert_str = f"index:{index}")
+					if cmd.isWord("text"):
+						cpyruns = [copy.copy(run) for run in self.runs]
+						for run in cpyruns:
+							run.run("text")
+						print2(cpyruns)
+					else:
+						fas = [run.find(copy.copy(cmd), is_list = True)
+							for run in self.runs]
+						blocks = itertools.zip_longest(*fas)
+						for index, content in enumerate(blocks):
+							print(f"index:{index}")
+							print2(content, insert_str = f"index:{index}")
 				except:
 					traceback.print_exc()
 			elif inp.startswith("remove "):

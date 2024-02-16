@@ -4,13 +4,30 @@ big5.quanben5.com
 /
 utf-8
 /
-
+find h3
+text
 /
-
+find div class description
+text
 /
-
+find div class tool_button
+find a
+get href
+trans
+find ul class list
+find li
+find a
+get href
+trans
 /
-
+find div id content
+text
 /
-
+find h1 class title1
+text
 /
+find p id page_next
+find a
+out not exist
+get href
+trans

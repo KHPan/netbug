@@ -493,8 +493,11 @@ class Novel:
 		self.file = None
 		self.file_name = None
 	
-	def setFile(self, file_name):
-		self.file_name = file_name
+	def setFile(self, add_file_name, novel_name = None):
+		if novel_name is None:
+			novel_name = self.novelName()
+		self.file_name = (novel_name + add_file_name
+			+ f"(爬蟲-{self.site.client_name}).txt")
 		self.file = open_file(file_name, 'w', True)
 	
 	def closeFile(self):
@@ -679,3 +682,5 @@ class Test:
 			file.close()
 			print("目前進度寫入備用檔案")
 
+if __name__ == "__main__":
+	site_list = SiteList()

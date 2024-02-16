@@ -493,12 +493,13 @@ class Novel:
 		self.file = None
 		self.file_name = None
 	
-	def setFile(self, add_file_name, novel_name = None):
-		if novel_name is None:
-			novel_name = self.novelName()
+	def setFile(self, add_file_name = None):
+		novel_name = self.novelName()
+		if add_file_name is None:
+			add_file_name = input(f"小說名：{novel_name}")
 		self.file_name = (novel_name + add_file_name
 			+ f"(爬蟲-{self.site.client_name}).txt")
-		self.file = open_file(file_name, 'w', True)
+		self.file = open_file(self.file_name, 'w', True)
 	
 	def closeFile(self):
 		if self.file is not None:

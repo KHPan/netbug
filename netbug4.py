@@ -4,7 +4,7 @@ try:
   is_colab = True
 except:
   is_colab = False
-from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup, Comment
 import requests
 from opencc import OpenCC
 import traceback
@@ -352,6 +352,8 @@ class Run:				#跑時用
 		try:
 			if cmd.isWord("text"):
 				self.div = copy.copy(self.div)
+				for ele in self.div.find_all(string=lambda text: isinstance(text, Comment)):
+					ele.extract()
 				while True:
 					flst = self.div.find_all(recursive=False)
 					if len(flst) == 0:

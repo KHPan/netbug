@@ -662,3 +662,4 @@ class Test:
 			file.write(str(self.site))
 			file.close()
 			print("目前進度寫入備用檔案")
+

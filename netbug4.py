@@ -554,13 +554,26 @@ class Test:
 			"ftitle" : "章節標題(若無則nothing)",
 			"fnext" : "下一章或out"}
 	
-	def __init__(self, site, address):
-		if site is None:
-			site = Site()
+	def __init__(self, address, site_list):
+		self.site = site_list.find(address)
+		if self.site is None:
+			self.site = Site()
 			site.address_name = urlparse(address).netloc
-			site.client_name = input("輸入網站名：")
-		self.site = site
-		self.runs = [Run(Page(site, address, is_test = True))]
+		try:
+			if (self.site.client_name == ""
+				or not askYN(f"網站名：{self.site.client_name}，滿意嗎？")):
+				self.site.client_name = input("輸入網站名：")
+			self.runs = [Run(Page(site, address, is_test = True))]
+			self.testCode()
+			if self.site not in site_list:
+				site_list.append(self.site)
+			site_list.write()
+			print("成功寫入檔案")
+		except KeyboardInterrupt:
+			file = open_file("test-data.txt", 'w', False)
+			file.write(str(self.site))
+			file.close()
+			print("目前進度寫入備用檔案")
 		
 	def makeCode(self, code_name = ""):		#從頭創造code
 		for run in self.runs:
@@ -659,28 +672,18 @@ class Test:
 			self.runs = runs_copy
 		setattr(self.site, code_name, self.makeCode(Test.fname[code_name]))
 
-	def test(self, site_list):			#test程式碼之後
-		try:
-			for key in Test.fname:
-				if key == "fnext":
-					while True:
-						address = input("輸入最後一頁網址：")
-						try:
-							self.runs.append(Run(Page(self.site, address)))
-						except requests.exceptions.RequestException:
-							print("請輸入合法網址")
-						else:
-							break
-				self.checkFunc(key)
-			if self.site not in site_list:
-				site_list.append(self.site)
-			site_list.write()
-			print("成功寫入檔案")
-		except KeyboardInterrupt:
-			file = open_file("test-data.txt", 'w', False)
-			file.write(str(self.site))
-			file.close()
-			print("目前進度寫入備用檔案")
+	def testCode(self):			#test程式碼之後
+		for key in Test.fname:
+			if key == "fnext":
+				while True:
+					address = input("輸入最後一頁網址：")
+					try:
+						self.runs.append(Run(Page(self.site, address)))
+					except requests.exceptions.RequestException:
+						print("請輸入合法網址")
+					else:
+						break
+			self.checkFunc(key)
 
 if __name__ == "__main__":
 	site_list = SiteList()

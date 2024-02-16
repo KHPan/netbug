@@ -548,6 +548,10 @@ class Test:
 			"fnext" : "下一章或out"}
 	
 	def __init__(self, site, address):
+		if site is None:
+			site = Site()
+			site.address_name = urlparse(address).netloc
+			site.client_name = input("輸入網站名：")
 		self.site = site
 		self.runs = [Run(Page(site, address, is_test = True))]
 		

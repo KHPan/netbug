@@ -656,7 +656,7 @@ class Test:
 			self.runs = runs_copy
 		setattr(self.site, code_name, self.makeCode(Test.fname[code_name]))
 
-	def test(self, site_list):			#test主程式
+	def test(self, site_list):			#test程式碼之後
 		try:
 			for key in Test.fname:
 				if key == "fnext":

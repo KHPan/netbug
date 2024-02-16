@@ -95,12 +95,10 @@ def print2(strs, insert_str = ""):		#並排寫多段字串並加分隔線
 		print(strs[0])
 	else:
 		separator = " \u2588 "
-		ele_width = (rows + len(separator)) // len(strs) - len(separator)
-		end = (rows + len(separator)) % len(strs)
-		end = " " * end
+		ele_width = (rows + len(separator) - 1) // len(strs) - len(separator)
 		iters = (_custom_wrap(txt, ele_width) for txt in strs)
 		for line in itertools.zip_longest(*iters, fillvalue = " " * ele_width):
-			print(separator.join(line), end = end)
+			print(separator.join(line))
 	if insert_str != "":
 		print(insert_str)
 	print('\u2588' * rows)

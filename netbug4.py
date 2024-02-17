@@ -24,7 +24,8 @@ import itertools
 cc=OpenCC("s2tw")
 from urllib.parse import urljoin
 from urllib.parse import urlparse
-from collections import deque
+from queue import Queue
+from threading import Thread
 
 def askYN(prt="滿意嗎？"):			#問是否問題
 	while True:
@@ -549,9 +550,12 @@ class Novel:
 			yd = copy.copy(self)
 			if isinstance(self.page.runFunc("fnext"), Out):
 				yield yd
-				self.closeFile()
 				return
 			yield yd
+
+	def iterThread(self, que):
+		for obj in enumerate(self):
+			que.put(obj)
 
 class Test:
 	fname = {"fnovelname" : "小說名",
@@ -774,7 +778,24 @@ class NovelList:
 					yield next(i)
 				except StopIteration:
 					lst.remove(i)
-		self.data = []
+
+	def iterThread(self, que):
+		for obj in self:
+			que.put(obj)
+
+	def closeFile(self):
+		for novel in self.data:
+			novel.closeFile()
+
+	def threadAll(self, que):
+		self.threads = []
+		for novel in self.data:
+			thread = Thread(target=novel.iterThread, args=(que, ))
+			thread.start()
+			self.threads.append(thread)
+	
+	def isThreadAlive(self):
+		return any(thread.is_alive() for thread in self.threads)
 
 if __name__ == "__main__":
 	site_list = SiteList()
@@ -787,8 +808,13 @@ if __name__ == "__main__":
 			if input_collector.is_test:
 				novels.test(site_list)
 			else:
-				for cnt, page in novels:
+				que = Queue(maxsize=10)
+				novels.threadAll(que)
+				while novels.isThreadAlive() or not que.empty():
+					cnt, page = que.get()
+					print(f"queue:{que.qsize()}  ", end="")
 					page.text(cnt)
+				novels.closeFile()
 		except:
 			traceback.print_exc()
 			print("出問題!!重來!!")

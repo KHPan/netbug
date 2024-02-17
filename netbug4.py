@@ -26,6 +26,7 @@ from urllib.parse import urljoin
 from urllib.parse import urlparse
 from queue import Queue
 from threading import Thread
+from fake_useragent import UserAgent
 
 def askYN(prt="滿意嗎？"):			#問是否問題
 	while True:
@@ -215,12 +216,13 @@ class Site:				#網站
 			self.encoding, self.fnovelname, self.fpreread,
 			self.fstart, self.fcontent, self.ftitle, self.fnext])
 	
-	headers = {"User-Agent" : "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36"}
+	ua = UserAgent()
 						#跳轉網址順便搞encoding
 	def trans(self, address, old_addr = None, is_test = False):
 		if old_addr is not None:
 			address = urljoin(old_addr, address)
-		response = requests.get(address, headers = Site.headers)
+		response = requests.get(address, headers = 
+			{"User-Agent" : Site.ua.random})
 		if self.encoding != "":
 			response.encoding = self.encoding
 		bs = BeautifulSoup(response.text, "lxml")

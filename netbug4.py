@@ -89,9 +89,13 @@ def _custom_wrap(text, width):	#print2專用，照寬切字串
 			yield (current_line +
 				" " * (width - line_length))
 
-def print2(strs, insert_str = ""):		#並排寫多段字串並加分隔線
+def print2(*strs, insert_str = ""):		#並排寫多段字串並加分隔線
 	rows, _ = os.get_terminal_size()
 	if len(strs) == 1:
+		strs = strs[0]
+	if not isinstance(strs, (tuple, list)):
+		print(strs)
+	elif len(strs) == 1:
 		print(strs[0])
 	else:
 		separator = " \u2588 "
@@ -698,7 +702,7 @@ class InputCollector:
 		self.is_test = is_test
 	
 	def input(self, site_list):
-		novels = []
+		novels = NovelList()
 		while True:
 			print("輸入測試網址：" if self.is_test
 				else "輸入爬蟲網址：")
@@ -709,21 +713,21 @@ class InputCollector:
 				sys.exit()
 			#檢查指令
 			if address in ("t", "T"):
-				if not self.is_test and len(novels) > 0:
+				if not self.is_test and not novels.isEmpty():
 					if not askYN("變為測試模式將會刪除之前輸入的爬蟲請求，確定？"):
 						continue
-					novels = []
+					novels.clean()
 				self.is_test = not self.is_test
 				continue
 			elif address in ("ok", "", "done", "start"):
 				if self.is_test:
 					print(f"{address}指令是爬蟲模式專用")
 					continue
-				elif len(novels) == 0:
+				elif novels.isEmpty():
 					print("未輸入爬蟲請求")
 					continue
 				else:
-					return NovelList(novels)
+					return novels
 			elif address == "show":
 				site_list.showSites()
 				continue
@@ -731,24 +735,35 @@ class InputCollector:
 			#test模式只需Test即可
 			if self.is_test:
 				return Test(address)
-
-			site = site_list.find(address)
-			if site is None:
-				print("未登錄網站，請使用以下網站：")
-				site_list.showSites()
-				continue
-			try:
-				novel = Novel(site, address)
-				novel.setFile()
-			except:
-				traceback.print_exc()
-				print("出問題!!爬蟲請求未載入!!")
 			else:
-				novels.append(novel)
+				novels.append(address, site_list)
 
 class NovelList:
-	def __init__(self, lst):
-		self.data = lst
+	def __init__(self):
+		self.data = []
+	
+	def clean(self):
+		self.data = []
+	
+	def append(self, address, site_list):
+		site = site_list.find(address)
+		if site is None:
+			print("未登錄網站，請使用以下網站：")
+			site_list.showSites()
+			return False
+		try:
+			novel = Novel(site, address)
+			novel.setFile()
+		except:
+			traceback.print_exc()
+			print("出問題!!爬蟲請求未載入!!")
+			return False
+		else:
+			self.data.append(novel)
+			return True
+	
+	def isEmpty(self):
+		return len(self.data) == 0
 
 	def __iter__(self):
 		lst = [enumerate(i) for i in self.data]

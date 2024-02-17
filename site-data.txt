@@ -417,7 +417,7 @@ find div class page1
 find a -1
 get href
 out exist .htm
-trans
+trans 5
 --網站分隔線--
 www.piaotia.com
 /

@@ -24,6 +24,7 @@ import itertools
 cc=OpenCC("s2tw")
 from urllib.parse import urljoin
 from urllib.parse import urlparse
+from collections import deque
 
 def askYN(prt="滿意嗎？"):			#問是否問題
 	while True:
@@ -475,7 +476,7 @@ class ListStack:
 	
 	def toBegin(self):
 		ret = self.data[0]
-		self.data = []
+		self.data.clear()
 		return ret
 	
 	def remove(self, index):

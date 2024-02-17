@@ -723,7 +723,7 @@ class InputCollector:
 					print("未輸入爬蟲請求")
 					continue
 				else:
-					return novels
+					return NovelList(novels)
 			elif address == "show":
 				site_list.showSites()
 				continue
@@ -746,14 +746,19 @@ class InputCollector:
 			else:
 				novels.append(novel)
 
-def iterMix(lst):
-	lst = [enumerate(i) for i in lst]
-	while len(lst) > 0:
-		for i in lst[:]:
-			try:
-				yield next(i)
-			except StopIteration:
-				lst.remove(i)#return filter(lambda n:n is not None, itertools.chain.from_iterable(itertools.zip_longest(*map(enumerate, lst))))
+class NovelList:
+	def __init__(self, lst):
+		self.data = lst
+
+	def __iter__(self):
+		lst = [enumerate(i) for i in self.data]
+		while len(lst) > 0:
+			for i in lst[:]:
+				try:
+					yield next(i)
+				except StopIteration:
+					lst.remove(i)
+		self.data = []
 
 if __name__ == "__main__":
 	site_list = SiteList()
@@ -766,7 +771,7 @@ if __name__ == "__main__":
 			if input_collector.is_test:
 				novels.test(site_list)
 			else:
-				for cnt, page in iterMix(novels):
+				for cnt, page in novels:
 					page.text(cnt)
 		except:
 			traceback.print_exc()

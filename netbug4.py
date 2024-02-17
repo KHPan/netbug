@@ -556,16 +556,21 @@ class Test:
 			"ftitle" : "章節標題(若無則nothing)",
 			"fnext" : "下一章或out"}
 	
-	def __init__(self, address, site_list):
-		self.site = site_list.find(address)
+	def __init__(self, address, site_list = None):
+		self.address = address
+		if site_list is not None:
+			self.test(site_list)
+
+	def test(self, site_list):		#主程式
+		self.site = site_list.find(self.address)
 		if self.site is None:
 			self.site = Site()
-			site.address_name = urlparse(address).netloc
+			self.site.address_name = urlparse(self.address).netloc
 		try:
 			if (self.site.client_name == ""
 				or not askYN(f"網站名：{self.site.client_name}，滿意嗎？")):
 				self.site.client_name = input("輸入網站名：")
-			self.runs = [Run(Page(self.site, address, is_test = True))]
+			self.runs = [Run(Page(self.site, self.address, is_test = True))]
 			self.testCode()
 			if self.site not in site_list:
 				site_list.append(self.site)
@@ -688,24 +693,14 @@ class Test:
 						break
 			self.checkFunc(key)
 
-def iterMix(lst):
-	lst = [enumerate(i) for i in lst]
-	while len(lst) > 0:
-		for i in lst[:]:
-			try:
-				yield next(i)
-			except StopIteration:
-				lst.remove(i)
-	#return filter(lambda n:n is not None, itertools.chain.from_iterable(itertools.zip_longest(*map(enumerate, lst))))
-
-if __name__ == "__main__":
-	site_list = SiteList()
-	is_test = False
-	while True:
-		#輸入部分
+class InputCollector:
+	def __init__(self, is_test = False):
+		self.is_test = is_test
+	
+	def input(self, site_list):
 		novels = []
 		while True:
-			print("輸入測試網址：" if is_test
+			print("輸入測試網址：" if self.is_test
 				else "輸入爬蟲網址：")
 			try:
 				address = input()
@@ -714,28 +709,28 @@ if __name__ == "__main__":
 				sys.exit()
 			#檢查指令
 			if address in ("t", "T"):
-				if not is_test and len(novels) > 0:
+				if not self.is_test and len(novels) > 0:
 					if not askYN("變為測試模式將會刪除之前輸入的爬蟲請求，確定？"):
 						continue
 					novels = []
-				is_test = not is_test
+				self.is_test = not self.is_test
 				continue
 			elif address in ("ok", "", "done", "start"):
-				if is_test:
+				if self.is_test:
 					print(f"{address}指令是爬蟲模式專用")
 					continue
 				elif len(novels) == 0:
 					print("未輸入爬蟲請求")
 					continue
 				else:
-					break
+					return novels
 			elif address == "show":
 				site_list.showSites()
 				continue
 
 			#test模式只需Test即可
-			if is_test:
-				break
+			if self.is_test:
+				return Test(address)
 
 			site = site_list.find(address)
 			if site is None:
@@ -750,13 +745,28 @@ if __name__ == "__main__":
 				print("出問題!!爬蟲請求未載入!!")
 			else:
 				novels.append(novel)
-			
+
+def iterMix(lst):
+	lst = [enumerate(i) for i in lst]
+	while len(lst) > 0:
+		for i in lst[:]:
+			try:
+				yield next(i)
+			except StopIteration:
+				lst.remove(i)#return filter(lambda n:n is not None, itertools.chain.from_iterable(itertools.zip_longest(*map(enumerate, lst))))
+
+if __name__ == "__main__":
+	site_list = SiteList()
+	input_collector = InputCollector()
+	while True:
+		novels = input_collector.input(site_list)
+
 		#跑的部分
 		try:
-			if is_test:
-				Test(address, site_list)
+			if input_collector.is_test:
+				novels.test(site_list)
 			else:
-				for cnt, page in iterMix(iter(novels)):
+				for cnt, page in iterMix(novels):
 					page.text(cnt)
 		except:
 			traceback.print_exc()

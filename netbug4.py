@@ -625,6 +625,8 @@ class Test:
 						for run in cpyruns:
 							run.run("text")
 						print2(cpyruns)
+					elif cmd.isWord("getText"):
+						print2([run.div.getText() for run in self.runs])
 					else:
 						fas = [run.find(copy.copy(cmd), is_list = True)
 							for run in self.runs]

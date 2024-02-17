@@ -716,7 +716,7 @@ class InputCollector:
 				if not self.is_test and not novels.isEmpty():
 					if not askYN("變為測試模式將會刪除之前輸入的爬蟲請求，確定？"):
 						continue
-					novels.clean()
+					novels.clear()
 				self.is_test = not self.is_test
 				continue
 			elif address in ("ok", "", "done", "start"):
@@ -742,7 +742,7 @@ class NovelList:
 	def __init__(self):
 		self.data = []
 	
-	def clean(self):
+	def clear(self):
 		self.data = []
 	
 	def append(self, address, site_list):

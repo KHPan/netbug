@@ -111,7 +111,7 @@ def print2(*strs, insert_str = ""):		#並排寫多段字串並加分隔線
 		print(insert_str)
 	print('\u2588' * rows)
 
-class CommandHandler:	#POP分析指令
+class CommandPopper:	#POP分析指令
 	def __init__(self, txt):
 		self.spt = [ele.replace("\\s", " ").replace("\\n", "\n")
 				for ele in str(txt).split(" ")]
@@ -364,11 +364,11 @@ class Run:				#跑時用
 	def run(self, code):
 		if isinstance(self.div, (Out, Error)):
 			return
-		if isinstance(code, CommandHandler):
+		if isinstance(code, CommandPopper):
 			cmd = code
 			code = str(code)
 		else:
-			cmd = CommandHandler(code)
+			cmd = CommandPopper(code)
 		try:
 			if cmd.isWord("text"):
 				self.div = copy.copy(self.div)
@@ -629,7 +629,7 @@ class Test:
 				print2(self.runs)
 			elif inp.startswith("show "):
 				try:
-					cmd = CommandHandler(inp)
+					cmd = CommandPopper(inp)
 					cmd.pop()
 					if cmd.isWord("text"):
 						cpyruns = [copy.copy(run) for run in self.runs]

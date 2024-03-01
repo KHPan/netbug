@@ -93,7 +93,9 @@ def _custom_wrap(text, width):	#print2專用，照寬切字串
 			yield (current_line +
 				" " * (width - line_length))
 
-def print2(*strs, insert_str = ""):		#並排寫多段字串並加分隔線
+def print2(*strs, msg = None):		#並排寫多段字串並加分隔線
+	if msg is not None:
+		print(msg)
 	rows, _ = os.get_terminal_size()
 	if len(strs) == 1:
 		strs = strs[0]
@@ -107,8 +109,8 @@ def print2(*strs, insert_str = ""):		#並排寫多段字串並加分隔線
 		iters = (_custom_wrap(txt, ele_width) for txt in strs)
 		for line in itertools.zip_longest(*iters, fillvalue = " " * ele_width):
 			print(separator.join(line))
-	if insert_str != "":
-		print(insert_str)
+	if msg is not None:
+		print(msg)
 	print('\u2588' * rows)
 
 class CommandPopper:	#POP分析指令
@@ -643,8 +645,7 @@ class Test:
 							for run in self.runs]
 						blocks = itertools.zip_longest(*fas)
 						for index, content in enumerate(blocks):
-							print(f"index:{index}")
-							print2(content, insert_str = f"index:{index}")
+							print2(content, msg = f"index:{index}")
 				except:
 					traceback.print_exc()
 			elif inp.startswith("remove "):

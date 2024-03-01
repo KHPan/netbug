@@ -27,6 +27,7 @@ from urllib.parse import urlparse
 from queue import Queue
 from threading import Thread
 from fake_useragent import UserAgent
+import json
 
 def askYN(prt="滿意嗎？"):			#問是否問題
 	while True:
@@ -171,6 +172,16 @@ class CommandHandler:	#POP分析指令
 	
 	def __str__(self):
 		return " ".join(self.spt)
+
+def siteTxt2Json():		#把site_data資訊從txt轉為json
+	keys = ("address_name", "client_name",
+			"encoding", "fnovelname", "fpreread",
+			"fstart", "fcontent", "ftitle", "fnext")
+	with open_file("site-data.txt", 'r', False) as fp:
+		data = [dict(zip(keys, site.split("\n/\n")))
+			for site in fp.read().split("\n--網站分隔線--\n")]
+	with open_file("site-data.json", 'w', False) as fp:
+		json.dump(data, fp)
 
 class SiteList:			#存著那些sites
 	def __init__(self):

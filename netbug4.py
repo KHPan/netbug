@@ -180,8 +180,13 @@ def siteTxt2Json():		#把site_data資訊從txt轉為json
 			"encoding", "fnovelname", "fpreread",
 			"fstart", "fcontent", "ftitle", "fnext")
 	with open_file("site-data.txt", 'r', False) as fp:
-		data = [dict(zip(keys, site.split("\n/\n")))
-			for site in fp.read().split("\n--網站分隔線--\n")]
+		data=[]
+		for site in fp.read().split("\n--網站分隔線--\n"):
+			dct={}
+			for key, content in zip(keys, site.split("\n/\n")):
+				dct[key] = (content.split("\n") if key[0] == "f"
+					else content)
+			data.append(dct)
 	with open_file("site-data.json", 'w', False) as fp:
 		json.dump(data, fp)
 

@@ -188,7 +188,7 @@ def siteTxt2Json():		#把site_data資訊從txt轉為json
 					else content)
 			data.append(dct)
 	with open_file("site-data.json", 'w', False) as fp:
-		json.dump(data, fp)
+		json.dump(data, fp, indent=4)
 
 class SiteList:			#存著那些sites
 	def __init__(self):

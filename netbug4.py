@@ -367,7 +367,7 @@ class Run:				#跑時用
 			else:
 				return [lst[index]] if is_list else lst[index]
 	
-	text_tag = ("p", "h1", "h2", "h3", "b", "em", "span")
+	text_tag = ("p", "h1", "h2", "h3", "b", "em", "span", "strong")
 	def run(self, code):
 		if isinstance(self.div, (Out, Error)):
 			return
@@ -397,8 +397,9 @@ class Run:				#跑時用
 			
 			elif cmd.isWord("unwrap"):
 				self.div = copy.copy(self.div)
+				find_list = self.find(cmd, is_list = True)
 				word = "" if cmd.isEmpty() else cmd.pop()
-				for ele in self.find(cmd, is_list = True):
+				for ele in find_list:
 					ele.insert_before(word)
 					ele.unwrap()
 			

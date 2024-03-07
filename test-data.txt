@@ -1,33 +1,18 @@
-big5.quanben5.com
+m.51eshu.com
 /
-全本big5
+無憂手機
 /
-utf-8
+UTF-8
 /
-find h3
+find p class name
+find strong
 text
 /
-find div class description
-text
+
 /
-find div class tool_button
-find a
-get href
-trans
-find ul class list
-find li
-find a
-get href
-trans
+
 /
-find div id content
-text
+
 /
-find h1 class title1
-text
+
 /
-find p id page_next
-find a
-out not exist
-get href
-trans

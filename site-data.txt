@@ -495,3 +495,39 @@ find a
 out not exist
 get href
 trans
+--網站分隔線--
+m.51eshu.com
+/
+無憂手機
+/
+UTF-8
+/
+find p class name
+text
+/
+find div class intro
+unwrap a
+text
+/
+find ul class action
+find a
+get href
+trans
+find ul class read
+find a
+get href
+trans
+/
+find div class content
+text
+/
+find h1 class headline
+text
+/
+find div class pager
+find a 2
+get href
+trans
+find div class content
+out not exist
+back

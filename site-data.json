@@ -1,6 +1,5 @@
-[
-    {
-        "address_name": "www.uukanshu.net",
+{
+    "www.uukanshu.net": {
         "client_name": "UU",
         "encoding": "gb2312",
         "fnovelname": [
@@ -36,8 +35,7 @@
             "trans"
         ]
     },
-    {
-        "address_name": "tw.uukanshu.net",
+    "tw.uukanshu.net": {
         "client_name": "UUtw",
         "encoding": "utf-8",
         "fnovelname": [
@@ -74,8 +72,7 @@
             "trans"
         ]
     },
-    {
-        "address_name": "ixdzs8.tw",
+    "ixdzs8.tw": {
         "client_name": "\u611b\u4e0btw",
         "encoding": "utf-8",
         "fnovelname": [
@@ -109,8 +106,7 @@
             "trans"
         ]
     },
-    {
-        "address_name": "tw.hjwzw.com",
+    "tw.hjwzw.com": {
         "client_name": "\u9ec3\u91d1\u5c4b",
         "encoding": "utf-8",
         "fnovelname": [
@@ -151,8 +147,7 @@
             "trans"
         ]
     },
-    {
-        "address_name": "houhuayuan.vip",
+    "houhuayuan.vip": {
         "client_name": "\u8594\u8587\u5f8c\u82b1\u5712",
         "encoding": "UTF-8",
         "fnovelname": [
@@ -181,8 +176,7 @@
             "trans"
         ]
     },
-    {
-        "address_name": "www.ttkan.co",
+    "www.ttkan.co": {
         "client_name": "\u5929\u5929",
         "encoding": "utf-8",
         "fnovelname": [
@@ -219,8 +213,7 @@
             "trans"
         ]
     },
-    {
-        "address_name": "czbooks.net",
+    "czbooks.net": {
         "client_name": "\u5c0f\u8aaa\u72c2\u4eba",
         "encoding": "UTF-8",
         "fnovelname": [
@@ -255,8 +248,7 @@
             "trans"
         ]
     },
-    {
-        "address_name": "www.novel543.com",
+    "www.novel543.com": {
         "client_name": "\u7a37\u4e0b",
         "encoding": "UTF-8",
         "fnovelname": [
@@ -290,8 +282,7 @@
             "out not exist"
         ]
     },
-    {
-        "address_name": "www.twbook.cc",
+    "www.twbook.cc": {
         "client_name": "\u77f3\u982d",
         "encoding": "UTF-8",
         "fnovelname": [
@@ -326,8 +317,7 @@
             "trans"
         ]
     },
-    {
-        "address_name": "m.xsw.tw",
+    "m.xsw.tw": {
         "client_name": "\u53f0\u7063",
         "encoding": "big5",
         "fnovelname": [
@@ -365,8 +355,7 @@
             "trans"
         ]
     },
-    {
-        "address_name": "www.sweetastes.com",
+    "www.sweetastes.com": {
         "client_name": "\u788e\u7247\u6545\u4e8b\u9928",
         "encoding": "utf-8",
         "fnovelname": [
@@ -405,8 +394,7 @@
             "trans"
         ]
     },
-    {
-        "address_name": "m.xszj.org",
+    "m.xszj.org": {
         "client_name": "\u5c0f\u8aaa\u4e4b\u5bb6",
         "encoding": "utf-8",
         "fnovelname": [
@@ -443,8 +431,7 @@
             "trans"
         ]
     },
-    {
-        "address_name": "www.69xinshu.com",
+    "www.69xinshu.com": {
         "client_name": "69",
         "encoding": "gbk",
         "fnovelname": [
@@ -485,8 +472,7 @@
             "trans 1 5"
         ]
     },
-    {
-        "address_name": "www.piaotia.com",
+    "www.piaotia.com": {
         "client_name": "\u98c4\u5929",
         "encoding": "gbk",
         "fnovelname": [
@@ -533,8 +519,7 @@
             "trans"
         ]
     },
-    {
-        "address_name": "big5.quanben5.com",
+    "big5.quanben5.com": {
         "client_name": "\u5168\u672cbig5",
         "encoding": "utf-8",
         "fnovelname": [
@@ -571,5 +556,45 @@
             "get href",
             "trans"
         ]
+    },
+    "m.51eshu.com": {
+        "client_name": "\u7121\u6182\u624b\u6a5f",
+        "encoding": "UTF-8",
+        "fnovelname": [
+            "find p class name",
+            "text"
+        ],
+        "fpreread": [
+            "find div class intro",
+            "unwrap a",
+            "text"
+        ],
+        "fstart": [
+            "find ul class action",
+            "find a",
+            "get href",
+            "trans",
+            "find ul class read",
+            "find a",
+            "get href",
+            "trans"
+        ],
+        "fcontent": [
+            "find div class content",
+            "text"
+        ],
+        "ftitle": [
+            "find h1 class headline",
+            "text"
+        ],
+        "fnext": [
+            "find div class pager",
+            "find a 2",
+            "get href",
+            "trans",
+            "find div class content",
+            "out not exist",
+            "back"
+        ]
     }
-]
+}

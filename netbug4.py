@@ -1,9 +1,9 @@
 try:
-  from google.colab import drive
-  drive.mount('/content/gdrive')
-  is_colab = True
+	from google.colab import drive
+	drive.mount('/content/gdrive')
+	is_colab = True
 except:
-  is_colab = False
+	is_colab = False
 from bs4 import BeautifulSoup, Comment
 import requests
 from opencc import OpenCC

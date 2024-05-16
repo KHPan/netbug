@@ -531,3 +531,40 @@ trans
 find div class content
 out not exist
 back
+--網站分隔線--
+www.69shu.pro
+/
+69
+/
+gbk
+/
+find div class booknav2
+find a
+text
+/
+find div class navtxt
+text
+/
+find div class addbtn
+find a
+get href
+trans
+find div id catalog
+find ul
+find li
+find a
+get href
+trans
+/
+find div class txtnav
+text
+/
+find div class txtnav
+find h1
+text
+/
+find div class page1
+find a -1
+get href
+out exist .html
+trans 1 5

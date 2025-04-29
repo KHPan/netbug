@@ -188,37 +188,6 @@ find a
 get href
 trans
 --網站分隔線--
-czbooks.net
-/
-小說狂人
-/
-UTF-8
-/
-find title
-text
-split 《 1
-split 》 0
-/
-find div class description
-text
-/
-find ul id chapter-list
-find a
-get href
-trans
-/
-find div class content
-text
-/
-find div class name
-text
-split 》 1
-/
-find a class next-chapter
-out not exist
-get href
-trans
---網站分隔線--
 www.novel543.com
 /
 稷下
@@ -312,7 +281,7 @@ tag
 find .html
 out not exist
 back tag
-trans
+trans 5 10
 --網站分隔線--
 www.sweetastes.com
 /
@@ -461,3 +430,137 @@ find a 2
 get href
 out exist index
 trans
+--網站分隔線--
+www.69shuba.com
+/
+69
+/
+gbk
+/
+find div class bread
+find a -1
+text
+/
+find div class navtxt
+text
+/
+find div class addbtn
+find a 0
+get href
+trans 5 10
+find li data-num 1
+find a
+get href
+trans 5 10
+/
+find div class txtnav
+extract h1
+extract div
+text
+/
+find div class txtnav
+find h1
+text
+/
+find div class page1
+find a -1
+get href
+out exist .htm
+trans 5 10
+--網站分隔線--
+ixdzs.tw
+/
+愛下tw
+/
+utf-8
+/
+find h1
+text
+/
+find p id intro
+text
+/
+find div class n-btn
+find a
+get href
+trans 5 10
+/
+find article
+find section
+text
+/
+find article
+find h3
+text
+/
+find div class chapter-act
+find a
+get href
+out exist end
+trans 5 10
+--網站分隔線--
+69shuba.cx
+/
+69shuba
+/
+gbk
+/
+find h1
+find a
+text
+/
+find div id jianjie-popup
+find div class content
+text
+/
+find div class addbtn
+find a
+get href
+trans 5 10
+find div id catalog
+find li data-num 1
+find a
+get href
+trans 5 10
+/
+find div class txtnav
+extract h1
+text
+/
+find div class txtnav
+find h1
+text
+/
+find div class page1
+find a -1
+get href
+out exist .htm
+trans 5 10
+--網站分隔線--
+www.xiaoshuo.com.tw
+/
+繁體
+/
+gbk
+/
+find h1 class bookTitle
+text
+/
+find p id bookIntro
+text
+/
+find div id list-chapterAll
+find a
+get href
+trans 5 10
+/
+find div id htmlContent
+text
+/
+find h1
+text
+/
+find a id linkNext
+get href
+out not exist .html
+trans 5 10
